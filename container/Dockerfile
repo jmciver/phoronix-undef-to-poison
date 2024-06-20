@@ -7,6 +7,7 @@ ARG USER_GID=${USER_UID}
 RUN apt-get update && \
   apt-get upgrade && \
   apt-get -y install \
+    clang \
     php-cli \
     php-xml \
     php-curl \
