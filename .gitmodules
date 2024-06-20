@@ -1,0 +1,12 @@
+[submodule "phoronix-test-profiles"]
+	path = test-profiles
+	url = https://github.com/jmciver/phoronix-test-profiles.git
+	branch = ub
+[submodule "phoronix-test-suite"]
+	path = phoronix-test-suite
+	url = https://github.com/jmciver/phoronix-test-suite
+	branch = master
+[submodule "phoronix-scripts"]
+	path = phoronix-scripts
+	url = https://github.com/jmciver/phoronix-scripts
+	branch = main
