@@ -17,7 +17,6 @@ RUN apt-get update && \
 RUN if [ ${USER_UID} -eq 1000 ]; then userdel -r ubuntu; fi && \
   groupadd -g ${USER_GID} -r ${USER} && \
   useradd -m -u ${USER_UID} -r -g ${USER} -G sudo ${USER} && \
-  mkdir -p /home/${USER}/phoronix && \
   usermod -p 'R0Vc6SemMBgmQ' ${USER} && \
   printf '#<domain>    <type>  <item>  <value>\n%-12s %-7s %-7s %s\n' \
     "${USER}" \
@@ -25,5 +24,8 @@ RUN if [ ${USER_UID} -eq 1000 ]; then userdel -r ubuntu; fi && \
     "nice" \
     "-20" > /etc/security/limits.d/${USER}-nice-maximum.conf
 
-USER ${USER}
 WORKDIR /home/$USER
+COPY --chown=$USER:$USER user-config.xml .phoronix-test-suite/
+RUN sed -i -E 's,\$HOME,'/home/${USER}',g' .phoronix-test-suite/user-config.xml
+
+USER ${USER}
