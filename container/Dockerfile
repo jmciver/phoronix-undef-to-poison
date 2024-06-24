@@ -9,11 +9,20 @@ ARG PTS_WORK_DIR=/pts
 RUN apt-get update && \
   apt-get upgrade && \
   apt-get -y install \
+    apt-file \
+    autoconf \
+    build-essential \
     clang \
+    libasio-dev \
+    libboost-all-dev \
+    libboost-iostreams-dev \
+    mesa-utils \
     php-cli \
-    php-xml \
     php-curl \
-    sudo && \
+    php-xml \
+    sudo \
+    unzip \
+    vulkan-tools && \
   apt-get clean autoclean
 
 RUN if [ ${USER_UID} -eq 1000 ]; then userdel -r ubuntu; fi && \
