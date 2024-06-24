@@ -4,6 +4,8 @@ ARG USER=ptr
 ARG USER_UID=1000
 ARG USER_GID=${USER_UID}
 
+ARG PTS_WORK_DIR=/pts
+
 RUN apt-get update && \
   apt-get upgrade && \
   apt-get -y install \
@@ -22,10 +24,14 @@ RUN if [ ${USER_UID} -eq 1000 ]; then userdel -r ubuntu; fi && \
     "${USER}" \
     "-" \
     "nice" \
-    "-20" > /etc/security/limits.d/${USER}-nice-maximum.conf
+    "-20" > /etc/security/limits.d/${USER}-nice-maximum.conf && \
+  mkdir ${PTS_WORK_DIR} && \
+  chown $USER:$USER ${PTS_WORK_DIR}
 
 WORKDIR /home/$USER
 COPY --chown=$USER:$USER user-config.xml .phoronix-test-suite/
-RUN sed -i -E 's,\$HOME,'/home/${USER}',g' .phoronix-test-suite/user-config.xml
+RUN sed -i -E 's,\$HOME,'${PTS_WORK_DIR}',g' .phoronix-test-suite/user-config.xml && \
+    ln -s /pts/phoronix/test-profiles .phoronix-test-suite/test-profiles && \
+    chown -h ${USER_UID}:${USER_GID} .phoronix-test-suite/test-profiles
 
 USER ${USER}
