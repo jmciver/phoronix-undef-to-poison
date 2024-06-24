@@ -39,7 +39,9 @@ RUN if [ ${USER_UID} -eq 1000 ]; then userdel -r ubuntu; fi && \
 
 WORKDIR /home/$USER
 COPY --chown=$USER:$USER user-config.xml .phoronix-test-suite/
+COPY --chown=$USER:$USER local-phoronix-run-config.bash .
 RUN sed -i -E 's,\$HOME,'${PTS_WORK_DIR}',g' .phoronix-test-suite/user-config.xml && \
+    sed -i -E 's,\$HOME,'${PTS_WORK_DIR}',g' local-phoronix-run-config.bash && \
     ln -s /pts/phoronix/test-profiles .phoronix-test-suite/test-profiles && \
     chown -h ${USER_UID}:${USER_GID} .phoronix-test-suite/test-profiles
 
