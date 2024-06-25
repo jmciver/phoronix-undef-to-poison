@@ -8,21 +8,31 @@ ARG PTS_WORK_DIR=/pts
 
 RUN apt-get update && \
   apt-get upgrade && \
-  apt-get -y install \
+  DEBIAN_FRONTEND=noninteractive apt-get -y install \
     apt-file \
+    apt-utils \
     autoconf \
     build-essential \
     clang \
+    cmake \
+    cmake-data \
+    curl \
+    less \
     libasio-dev \
     libboost-all-dev \
     libboost-iostreams-dev \
+    libcurl4-openssl-dev \
+    libjpeg-dev \
     mesa-utils \
+    nasm \
+    p7zip-full \
     php-cli \
     php-curl \
     php-xml \
     sudo \
     unzip \
-    vulkan-tools && \
+    vulkan-tools \
+    yasm && \
   apt-get clean autoclean
 
 RUN if [ ${USER_UID} -eq 1000 ]; then userdel -r ubuntu; fi && \
