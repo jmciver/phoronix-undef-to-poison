@@ -45,6 +45,9 @@ RUN apt-get update && \
 
 ENV LANG=en_US.utf8
 
+# Disable gcc and g++ from being accessible to the runtime user.
+RUN chmod 700 $(readlink -f /usr/bin/g++) && chmod 700 $(readlink -f /usr/bin/gcc)
+
 RUN if [ ${USER_UID} -eq 1000 ]; then userdel -r ubuntu; fi && \
   groupadd -g ${USER_GID} -r ${USER} && \
   useradd -m -u ${USER_UID} -r -g ${USER} -G sudo ${USER} && \
