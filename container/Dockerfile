@@ -21,19 +21,29 @@ RUN apt-get update && \
     libasio-dev \
     libboost-all-dev \
     libboost-iostreams-dev \
+    libbrotli-dev \
     libcurl4-openssl-dev \
     libjpeg-dev \
+    libnl-genl-3-dev \
+    locales \
     mesa-utils \
     nasm \
     p7zip-full \
     php-cli \
     php-curl \
     php-xml \
+    pkg-config \
     sudo \
+    tcl \
+    tclsh \
     unzip \
     vulkan-tools \
     yasm && \
-  apt-get clean autoclean
+  apt-get clean autoclean && \
+  rm -rf /var/lib/apt/lists/* && \
+  localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
+
+ENV LANG=en_US.utf8
 
 RUN if [ ${USER_UID} -eq 1000 ]; then userdel -r ubuntu; fi && \
   groupadd -g ${USER_GID} -r ${USER} && \
