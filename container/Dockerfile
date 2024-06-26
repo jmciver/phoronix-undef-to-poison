@@ -22,6 +22,7 @@ RUN apt-get update && \
     libboost-all-dev \
     libboost-iostreams-dev \
     libbrotli-dev \
+    libcap2-bin \
     libcurl4-openssl-dev \
     libjpeg-dev \
     libnl-genl-3-dev \
@@ -41,7 +42,8 @@ RUN apt-get update && \
     yasm && \
   apt-get clean autoclean && \
   rm -rf /var/lib/apt/lists/* && \
-  localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
+  localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8 && \
+  setcap 'cap_sys_nice=eip' /usr/bin/nice
 
 ENV LANG=en_US.utf8
 
