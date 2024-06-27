@@ -20,6 +20,7 @@ RUN apt-get update && \
     curl \
     fftw-dev \
     flex \
+    git \
     less \
     libasio-dev \
     libboost-all-dev \
@@ -28,24 +29,29 @@ RUN apt-get update && \
     libcap2-bin \
     libcurl4-openssl-dev \
     libfftw3-dev \
+    libfindbin-libs-perl \
     libfreetype6-dev \
     libjpeg-dev \
     libnl-genl-3-dev \
     locales \
     mesa-utils \
     nasm \
+    ninja-build \
     p7zip-full \
     php-cli \
     php-curl \
     php-xml \
     pkg-config \
+    python3 \
+    python3-psutil \
     sudo \
     tcl \
     tclsh \
     unzip \
     vulkan-tools \
     xorg-dev \
-    yasm && \
+    yasm \
+    zlib1g-dev && \
   apt-get clean autoclean && \
   rm -rf /var/lib/apt/lists/* && \
   localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8 && \
@@ -71,9 +77,12 @@ RUN if [ ${USER_UID} -eq 1000 ]; then userdel -r ubuntu; fi && \
 WORKDIR /home/$USER
 COPY --chown=$USER:$USER user-config.xml .phoronix-test-suite/
 COPY --chown=$USER:$USER local-phoronix-run-config.bash .
+COPY --chown=$USER:$USER CMakePresets.json .
+COPY --chown=$USER:$USER build-and-run.bash .
 RUN sed -i -E 's,\$HOME,'${PTS_WORK_DIR}',g' .phoronix-test-suite/user-config.xml && \
     sed -i -E 's,\$HOME,'${PTS_WORK_DIR}',g' local-phoronix-run-config.bash && \
     ln -s /pts/phoronix/test-profiles .phoronix-test-suite/test-profiles && \
     chown -h ${USER_UID}:${USER_GID} .phoronix-test-suite/test-profiles
 
 USER ${USER}
+ENTRYPOINT ["./build-and-run.bash"]
