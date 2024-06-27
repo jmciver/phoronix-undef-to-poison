@@ -12,11 +12,14 @@ RUN apt-get update && \
     apt-file \
     apt-utils \
     autoconf \
+    bison \
     build-essential \
     clang \
     cmake \
     cmake-data \
     curl \
+    fftw-dev \
+    flex \
     less \
     libasio-dev \
     libboost-all-dev \
@@ -24,6 +27,8 @@ RUN apt-get update && \
     libbrotli-dev \
     libcap2-bin \
     libcurl4-openssl-dev \
+    libfftw3-dev \
+    libfreetype6-dev \
     libjpeg-dev \
     libnl-genl-3-dev \
     locales \
@@ -39,6 +44,7 @@ RUN apt-get update && \
     tclsh \
     unzip \
     vulkan-tools \
+    xorg-dev \
     yasm && \
   apt-get clean autoclean && \
   rm -rf /var/lib/apt/lists/* && \
