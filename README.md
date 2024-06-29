@@ -76,3 +76,7 @@ executable.
 
 The Phoronix test invocation uses `taskset` for CPU affinity. Further
 investigation is required on how to best handle this in a container.
+
+## References
+
+* (cpupower)[https://wiki.archlinux.org/title/CPU_frequency_scaling]
