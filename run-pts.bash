@@ -11,6 +11,18 @@ declare -r PTS_INSTALL="/tmp/pts-install"
 
 declare LLVM_PATH=""
 
+function helpMessage () {
+    cat <<-EOF
+
+ENTRY_POINT_OPTIONS are:
+
+[-b|--build]    to build the llvm project
+[-p|--phoronix] to run Phoronix tests
+[-t|--test]     to run llvm release2 check-all target
+
+EOF
+}
+
 if [ ! -d "$PTS_INSTALL" ]; then
     printf "INFO: making pts install/build directory %s\n" "$PTS_INSTALL"
     mkdir -p "$PTS_INSTALL" || exit 1
@@ -28,6 +40,7 @@ while [ $# -gt 0 ]; do
     case "$1" in
         -h | --help)
             printf "%s\n" "usage: $SCRIPT_NAME [-h|--help] --llvm=PATH -- ENTRY_POINT_OPTIONS"
+            helpMessage
             exit 0
             ;;
         --llvm)
