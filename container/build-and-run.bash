@@ -18,14 +18,14 @@ function buildLLVM() {
         printf 'ERROR: LLVM directory "%s" does not exist\n' "$LLVM_DIR"
         exit 1
     fi
-    pushd $LLVM_DIR >& /dev/null
+    pushd $LLVM_DIR &> /dev/null
     [ ! -f CMakePresets.json ] && cp $HOME/CMakePresets.json .
     rm -rf ../../build/release2 && \
         cmake --preset release1 && \
         cmake --build --preset release1 && \
         cmake --preset release2 && \
         cmake --build --preset release2
-    popd >& /dev/null
+    popd &> /dev/null
 }
 
 function testLLVM() {
@@ -33,10 +33,10 @@ function testLLVM() {
         printf 'ERROR: LLVM directory "%s" does not exist\n' "$LLVM_DIR"
         exit 1
     fi
-    pushd $LLVM_DIR >& /dev/null
+    pushd $LLVM_DIR &> /dev/null
     [ ! -f CMakePresets.json ] && cp $HOME/CMakePresets.json .
     cmake --build --preset release2 -t check-all
-    popd >& /dev/null
+    popd &> /dev/null
 }
 
 function runPhoronix() {
@@ -52,9 +52,9 @@ function runPhoronix() {
     fi
     export CC="${LLVM_BIN_PATH}/clang"
     export CXX="${LLVM_BIN_PATH}/clang++"
-    pushd $PHORONIX_DIR >& /dev/null
+    pushd $PHORONIX_DIR &> /dev/null
     ./run.sh
-    popd >& /dev/null
+    popd &> /dev/null
 }
 
 RESULT=$(getopt \
