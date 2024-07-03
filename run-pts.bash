@@ -9,37 +9,34 @@ declare -r OPT_STRING="-h"
 
 declare -r PTS_INSTALL="/tmp/pts-install"
 
-declare -r CPU_TURBO="/sys/devices/system/cpu/intel_pstate/no_turbo"
-declare -r CPU_HYPERTHREAD="/sys/devices/system/cpu/smt/control"
+declare -r CPU_TURBO_BOOST="/sys/devices/system/cpu/intel_pstate/no_turbo"
+declare -r CPU_HYPER_THREAD="/sys/devices/system/cpu/smt/control"
 
 declare -i CPU_CHECK_FAIL=1
 
 declare LLVM_PATH=""
 
 function checkCpuSettings() {
-    checkCpuTurbo
+    checkCpuTurboBoost
     checkCpuHyperThread
     checkCpuGovernor
 }
 
-function checkCpuTurbo() {
-    printf "INFO: Turbo boost is "
-    if grep -q '0' $CPU_TURBO; then
-        printf "enabled\n"
-        [ $CPU_CHECK_FAIL -eq 1 ] && exit 1
-    else
-        printf "disabled\n"
-    fi
+function cpuCheckMessage() {
+    declare header=$([ $1 -eq 0 -a $CPU_CHECK_FAIL -eq 1 ] && echo "ERROR" || echo "INFO")
+    declare state=$([ $1 -eq 0 ] && echo $3 || echo $4)
+    printf "%s: %s %s\n" "$header" "$2" "$state"
+    [ $CPU_CHECK_FAIL -eq 1 -a $1 -eq 0 ] && exit 1
+}
+
+function checkCpuTurboBoost() {
+    grep -q '0' $CPU_TURBO_BOOST
+    cpuCheckMessage $? "Turbo boost is" "enabled" "disabled"
 }
 
 function checkCpuHyperThread() {
-    printf "INFO: Hyperthreading is "
-    if grep -q 'on' $CPU_HYPERTHREAD; then
-        printf "enabled\n"
-        [ $CPU_CHECK_FAIL -eq 1 ] && exit 1
-    else
-        printf "disabled\n"
-    fi
+    grep -q 'on' $CPU_HYPER_THREAD
+    cpuCheckMessage $? "Hyper-threading is" "enabled" "disabled"
 }
 
 function checkCpuGovernor() {
