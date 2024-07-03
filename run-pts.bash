@@ -9,28 +9,47 @@ declare -r OPT_STRING="-h"
 
 declare -r PTS_INSTALL="/tmp/pts-install"
 
+declare -r CPU_TURBO="/sys/devices/system/cpu/intel_pstate/no_turbo"
+declare -r CPU_HYPERTHREAD="/sys/devices/system/cpu/smt/control"
+
+declare -i CPU_CHECK_FAIL=1
+
 declare LLVM_PATH=""
 
 function checkCpuSettings() {
-    declare -r cpuTurbo="/sys/devices/system/cpu/intel_pstate/no_turbo"
-    grep -q '0' $cpuTurbo
-    if [ $? -eq 0 ]; then
-        printf "INFO: Turbo boost is enabled\n"
-    fi
-    declare -r hyperThread="/sys/devices/system/cpu/smt/control"
-    grep -q 'on' $hyperThread
-    if [ $? -eq 0 ]; then
-        printf "INFO: Hyperthreading is enabled\n"
-    fi
+    checkCpuTurbo
+    checkCpuHyperThread
+    checkCpuGovernor
+}
 
+function checkCpuTurbo() {
+    printf "INFO: Turbo boost is "
+    if grep -q '0' $CPU_TURBO; then
+        printf "enabled\n"
+        [ $CPU_CHECK_FAIL -eq 1 ] && exit 1
+    else
+        printf "disabled\n"
+    fi
+}
+
+function checkCpuHyperThread() {
+    printf "INFO: Hyperthreading is "
+    if grep -q 'on' $CPU_HYPERTHREAD; then
+        printf "enabled\n"
+        [ $CPU_CHECK_FAIL -eq 1 ] && exit 1
+    else
+        printf "disabled\n"
+    fi
+}
+
+function checkCpuGovernor() {
     if ! command -v cpupower &> /dev/null; then
         printf "WARNING: cpupower command is not available\n"
         return
     fi
     declare -r governor=$(cpupower frequency-info -p | sed -E -e '3!d' -e 's/\s.*+"(.*)".*/\1/')
-    if [ "$governor" = "performance" ]; then
-        printf "INFO: Performance governor is %s\n" "$governor"
-    fi
+    printf "INFO: Performance governor is %s\n" "$governor"
+    [ $CPU_CHECK_FAIL -eq 1 -a ! "$governor" = "performance" ] && exit 1
 }
 
 function helpMessage () {
@@ -56,7 +75,7 @@ fi
 RESULT=$(getopt \
              --name "$SCRIPT_NAME" \
              --options "$OPT_STRING" \
-             --longoptions "help,llvm:" \
+             --longoptions "help,llvm:,no-cpu-checks" \
              -- "$@")
 
 eval set -- "$RESULT"
@@ -64,13 +83,16 @@ eval set -- "$RESULT"
 while [ $# -gt 0 ]; do
     case "$1" in
         -h | --help)
-            printf "%s\n" "usage: $SCRIPT_NAME [-h|--help] --llvm=PATH -- ENTRY_POINT_OPTIONS"
+            printf "%s\n" "usage: $SCRIPT_NAME [-h|--help] [--no-cpu-checks] --llvm=PATH -- ENTRY_POINT_OPTIONS"
             helpMessage
             exit 0
             ;;
         --llvm)
             shift
             LLVM_PATH=$1
+            ;;
+        --no-cpu-checks)
+            CPU_CHECK_FAIL=0
             ;;
         --)
             shift
