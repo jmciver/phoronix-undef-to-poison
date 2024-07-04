@@ -16,10 +16,30 @@ declare -i CPU_CHECK_FAIL=1
 
 declare LLVM_PATH=""
 
+function setCpuConfiguration() {
+    echo "1" | sudo tee $CPU_TURBO_BOOST
+    echo "off" | sudo tee $CPU_HYPER_THREAD
+    checkCpuPowerCommand && sudo cpupower frequency-set --governor performance
+    CPU_CHECK_FAIL=1
+    checkCpuSettings
+}
+
+function unsetCpuConfiguration() {
+    echo "0" | sudo tee $CPU_TURBO_BOOST
+    echo "on" | sudo tee $CPU_HYPER_THREAD
+    checkCpuPowerCommand && sudo cpupower frequency-set --governor schedutil
+    CPU_CHECK_FAIL=0
+    checkCpuSettings
+}
+
 function checkCpuSettings() {
     checkCpuTurboBoost
     checkCpuHyperThread
     checkCpuGovernor
+}
+
+function checkCpuPowerCommand() {
+    command -v cpupower &> /dev/null && true || false
 }
 
 function cpuCheckMessage() {
@@ -40,7 +60,7 @@ function checkCpuHyperThread() {
 }
 
 function checkCpuGovernor() {
-    if ! command -v cpupower &> /dev/null; then
+    if ! checkCpuPowerCommand; then
         printf "WARNING: cpupower command is not available\n"
         return
     fi
@@ -72,7 +92,7 @@ fi
 RESULT=$(getopt \
              --name "$SCRIPT_NAME" \
              --options "$OPT_STRING" \
-             --longoptions "help,llvm:,no-cpu-checks" \
+             --longoptions "help,llvm:,no-cpu-checks,set-cpu,unset-cpu" \
              -- "$@")
 
 eval set -- "$RESULT"
@@ -80,7 +100,7 @@ eval set -- "$RESULT"
 while [ $# -gt 0 ]; do
     case "$1" in
         -h | --help)
-            printf "%s\n" "usage: $SCRIPT_NAME [-h|--help] [--no-cpu-checks] --llvm=PATH -- ENTRY_POINT_OPTIONS"
+            printf "%s\n" "usage: $SCRIPT_NAME [-h|--help] [--no-cpu-checks] [--set-cpu] [--unset-cpu] --llvm=PATH -- ENTRY_POINT_OPTIONS"
             helpMessage
             exit 0
             ;;
@@ -90,6 +110,14 @@ while [ $# -gt 0 ]; do
             ;;
         --no-cpu-checks)
             CPU_CHECK_FAIL=0
+            ;;
+        --set-cpu)
+            setCpuConfiguration
+            exit 0
+            ;;
+        --unset-cpu)
+            unsetCpuConfiguration
+            exit 0
             ;;
         --)
             shift
