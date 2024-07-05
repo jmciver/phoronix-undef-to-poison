@@ -14,6 +14,8 @@ declare -r CPU_HYPER_THREAD="/sys/devices/system/cpu/smt/control"
 
 declare -i CPU_CHECK_FAIL=1
 
+declare -i INTERACTIVE=0
+
 declare LLVM_PATH=""
 
 function setCpuConfiguration() {
@@ -92,7 +94,7 @@ fi
 RESULT=$(getopt \
              --name "$SCRIPT_NAME" \
              --options "$OPT_STRING" \
-             --longoptions "help,llvm:,no-cpu-checks,set-cpu,unset-cpu" \
+             --longoptions "help,interactive,llvm:,no-cpu-checks,set-cpu,unset-cpu" \
              -- "$@")
 
 eval set -- "$RESULT"
@@ -100,9 +102,12 @@ eval set -- "$RESULT"
 while [ $# -gt 0 ]; do
     case "$1" in
         -h | --help)
-            printf "%s\n" "usage: $SCRIPT_NAME [-h|--help] [--no-cpu-checks] [--set-cpu] [--unset-cpu] --llvm=PATH -- ENTRY_POINT_OPTIONS"
+            printf "%s\n" "usage: $SCRIPT_NAME [-h|--help] [--interactive] [--no-cpu-checks] [--set-cpu] [--unset-cpu] --llvm=PATH -- ENTRY_POINT_OPTIONS"
             helpMessage
             exit 0
+            ;;
+        --interactive)
+            INTERACTIVE=1
             ;;
         --llvm)
             shift
@@ -137,6 +142,20 @@ fi
 if [ ! -d "$LLVM_PATH" ]; then
     printf "ERROR: --llvm=%s does not specify a real directory\n" "$LLVM_PATH"
     exit 1
+fi
+
+if [ $INTERACTIVE -eq 1 ]; then
+   docker \
+       run \
+       -it \
+       --rm \
+       --cap-add SYS_NICE \
+       --mount type=bind,source="$(pwd)",target="/pts/phoronix" \
+       --mount type=bind,source="$PTS_INSTALL",target="/pts/pts-install" \
+       --mount type=bind,source="$LLVM_PATH",target="/llvm" \
+       --entrypoint=/usr/bin/bash \
+       pts-test:1
+   exit 0
 fi
 
 docker \
