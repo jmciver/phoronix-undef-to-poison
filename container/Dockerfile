@@ -7,7 +7,7 @@ ARG USER_GID=${USER_UID}
 ARG PTS_WORK_DIR=/pts
 
 RUN apt-get update && \
-  apt-get upgrade && \
+  apt-get -y upgrade && \
   DEBIAN_FRONTEND=noninteractive apt-get -y install \
     apt-file \
     apt-utils \
