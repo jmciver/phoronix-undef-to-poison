@@ -50,7 +50,7 @@ user building the container.
 Container based building and performance benchmarking is accomplished using
 `run-pts.bash`:
 ```
-usage: run-pts.bash [-h|--help] [--no-cpu-checks] [--set-cpu] [--unset-cpu] --llvm=PATH -- ENTRY_POINT_OPTIONS
+usage: run-pts.bash [-h|--help] [--interactive] [--no-cpu-checks] [--cpu-set] [--cpu-unset] [--cpu-info] --llvm=PATH -- ENTRY_POINT_OPTIONS
 
 ENTRY_POINT_OPTIONS are:
 
@@ -80,7 +80,7 @@ Three bind mounts are used by the container and set by the container run script
 
 CPU frequency governance needs to be set to performance. This can be
 accomplished using OS utilities (BIOS permitting) or via the BIOS or using
-`run-pts.bash` option `--set-cpu` (requires `sudo`). Server BIOSs may have
+`run-pts.bash` option `--cpu-set` (requires `sudo`). Server BIOSs may have
 power/performance profiles based on baseboard management controller (BMC). This
 will need to be set to some form of OS performance control.
 
