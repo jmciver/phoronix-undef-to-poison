@@ -63,8 +63,8 @@ function checkCpuHyperThread() {
 
 function checkCpuGovernor() {
     if ! checkCpuPowerCommand; then
-        printf "WARNING: cpupower command is not available\n"
-        return
+        printf "ERROR: cpupower command is not available\n"
+        exit 1
     fi
     declare -r governor=$(cpupower frequency-info -p | sed -E -e '3!d' -e 's/\s.*+"(.*)".*/\1/')
     printf "INFO: Performance governor is %s\n" "$governor"
