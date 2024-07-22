@@ -61,14 +61,37 @@ function checkCpuHyperThread() {
     cpuCheckMessage $? "Hyper-threading is" "enabled" "disabled"
 }
 
+function cpuPowerErrorMessage() {
+    cat <<-EOF
+$1: cpupower command was not able to obtain frequency information. This is
+       most likely caused by a performance related BIOS setting.
+
+       "cpupower frequency-info -p" reported the following output:
+EOF
+    cpupower frequency-info -p
+}
+
 function checkCpuGovernor() {
     if ! checkCpuPowerCommand; then
-        printf "ERROR: cpupower command is not available\n"
-        exit 1
+        if [ $CPU_CHECK_FAIL -eq 1 ]; then
+            printf "ERROR: cpupower command is not available\n" && exit 1
+        else
+            printf "WARNING: cpupower command is not available\n"
+        fi
+    else
+        declare -r governor=$(cpupower frequency-info -p | sed -E -e '3!d' -e 's/\s.*+"(.*)".*/\1/')
+        if [ $? -ne 0 ]; then
+            if [ $CPU_CHECK_FAIL -eq 1 ]; then
+                cpuPowerErrorMessage "ERROR"
+                exit 1
+            else
+                cpuPowerErrorMessage "WARNING"
+            fi
+        else
+            printf "INFO: Performance governor is %s\n" "$governor"
+            [ $CPU_CHECK_FAIL -eq 1 -a ! "$governor" = "performance" ] && exit 1
+        fi
     fi
-    declare -r governor=$(cpupower frequency-info -p | sed -E -e '3!d' -e 's/\s.*+"(.*)".*/\1/')
-    printf "INFO: Performance governor is %s\n" "$governor"
-    [ $CPU_CHECK_FAIL -eq 1 -a ! "$governor" = "performance" ] && exit 1
 }
 
 function helpMessage () {
