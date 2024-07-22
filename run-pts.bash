@@ -117,7 +117,7 @@ fi
 RESULT=$(getopt \
              --name "$SCRIPT_NAME" \
              --options "$OPT_STRING" \
-             --longoptions "help,interactive,llvm:,no-cpu-checks,set-cpu,unset-cpu,cpu-info" \
+             --longoptions "help,interactive,llvm:,no-cpu-checks,cpu-set,cpu-unset,cpu-info" \
              -- "$@")
 
 eval set -- "$RESULT"
@@ -125,7 +125,7 @@ eval set -- "$RESULT"
 while [ $# -gt 0 ]; do
     case "$1" in
         -h | --help)
-            printf "%s\n" "usage: $SCRIPT_NAME [-h|--help] [--interactive] [--no-cpu-checks] [--set-cpu] [--unset-cpu] [--cpu-info] --llvm=PATH -- ENTRY_POINT_OPTIONS"
+            printf "%s\n" "usage: $SCRIPT_NAME [-h|--help] [--interactive] [--no-cpu-checks] [--cpu-set] [--cpu-unset] [--cpu-info] --llvm=PATH -- ENTRY_POINT_OPTIONS"
             helpMessage
             exit 0
             ;;
@@ -139,17 +139,17 @@ while [ $# -gt 0 ]; do
         --no-cpu-checks)
             CPU_CHECK_FAIL=0
             ;;
-        --set-cpu)
+        --cpu-set)
             setCpuConfiguration
+            exit 0
+            ;;
+        --cpu-unset)
+            unsetCpuConfiguration
             exit 0
             ;;
         --cpu-info)
             CPU_CHECK_FAIL=0
             checkCpuSettings
-            exit 0
-            ;;
-        --unset-cpu)
-            unsetCpuConfiguration
             exit 0
             ;;
         --)
