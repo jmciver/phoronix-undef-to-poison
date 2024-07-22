@@ -7,7 +7,7 @@ toward the X86_64 architecture, but others may work.
 Tests have been selected as to allow for use of the Clang compiler that are known
 to produce repeatable results.
 
-The container is provisioned to prevent the inadverant use of the GNU C and C++
+The container is provisioned to prevent the inadvertent use of the GNU C and C++
 compilers. Test execution is performed using the `pts` user with password locked
 `sudo`.
 
