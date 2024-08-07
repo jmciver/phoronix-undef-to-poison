@@ -178,6 +178,7 @@ if [ $INTERACTIVE -eq 1 ]; then
        -it \
        --rm \
        --cap-add SYS_NICE \
+       --ulimit core=0 \
        --mount type=bind,source="$(pwd)",target="/pts/phoronix" \
        --mount type=bind,source="$PTS_INSTALL",target="/pts/pts-install" \
        --mount type=bind,source="$LLVM_PATH",target="/llvm" \
@@ -191,6 +192,7 @@ docker \
     -it \
     --rm \
     --cap-add SYS_NICE \
+    --ulimit core=0 \
     --mount type=bind,source="$(pwd)",target="/pts/phoronix" \
     --mount type=bind,source="$PTS_INSTALL",target="/pts/pts-install" \
     --mount type=bind,source="$LLVM_PATH",target="/llvm" \
