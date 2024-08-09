@@ -1,5 +1,7 @@
 #!/usr/bin/bash
 
+set -u
+
 declare -r SCRIPT_NAME=${0##*/}
 declare -r SCRIPT_PATH=${0%/*}
 

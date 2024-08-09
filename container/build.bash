@@ -1,5 +1,7 @@
 #!/usr/bin/bash
 
+set -u
+
 declare -r USER_UID=$(id -u)
 declare -r USER_GID=$(id -g)
 
