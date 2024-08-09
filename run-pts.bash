@@ -100,7 +100,8 @@ function helpMessage () {
 ENTRY_POINT_OPTIONS are:
 
 Build & Test:
-[-b|--build]    to build the llvm project
+[-b|--build]    to build a bootstrap version of the llvm project
+[--build-debug] to build a debug version of the llvm project
 [-t|--test]     to run llvm release2 check-all target
 
 Phoronix:
