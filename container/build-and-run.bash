@@ -6,6 +6,7 @@ declare -r SCRIPT_PATH=${0%/*}
 declare -r OPT_STRING="-h,-b,-p,-t"
 
 declare -i STEP_BUILD=0
+declare -i STEP_BUILD_DEBUG=0
 declare -i STEP_TEST=0
 declare -i STEP_PHORONIX=0
 
@@ -25,6 +26,18 @@ function buildLLVM() {
         cmake --build --preset release1 && \
         cmake --preset release2 && \
         cmake --build --preset release2
+    popd &> /dev/null
+}
+
+function buildDebugLLVM() {
+    if [ ! -d "$LLVM_DIR" ]; then
+        printf 'ERROR: LLVM directory "%s" does not exist\n' "$LLVM_DIR"
+        exit 1
+    fi
+    pushd $LLVM_DIR &> /dev/null
+    [ ! -f CMakePresets.json ] && cp $HOME/CMakePresets.json .
+        cmake --preset debug && \
+        cmake --build --preset debug
     popd &> /dev/null
 }
 
@@ -60,7 +73,7 @@ function runPhoronix() {
 RESULT=$(getopt \
              --name "$SCRIPT_NAME" \
              --options "$OPT_STRING" \
-             --longoptions "help,build,phoronix,test" \
+             --longoptions "help,build,build-debug,phoronix,test" \
              -- "$@")
 
 eval set -- "$RESULT"
@@ -68,11 +81,14 @@ eval set -- "$RESULT"
 while [ $# -gt 0 ]; do
     case "$1" in
         -h | --help)
-            printf "%s\n" "usage: $SCRIPT_NAME [-h|--help] [-b|--build] [-p|--phoronix] [-t|--test]"
+            printf "%s\n" "usage: $SCRIPT_NAME [-h|--help] [-b|--build] [--build-debug] [-p|--phoronix] [-t|--test]"
             exit 0
             ;;
         -b | --build)
             STEP_BUILD=1
+            ;;
+        --build-debug)
+            STEP_BUILD_DEBUG=1
             ;;
         -p | --phoronix)
             STEP_PHORONIX=1
@@ -84,5 +100,6 @@ while [ $# -gt 0 ]; do
 done
 
 [ $STEP_BUILD -eq 1 ] && buildLLVM
+[ $STEP_BUILD_DEBUG -eq 1 ] && buildDebugLLVM
 [ $STEP_TEST -eq 1 ] && testLLVM
 [ $STEP_PHORONIX -eq 1 ] && runPhoronix
