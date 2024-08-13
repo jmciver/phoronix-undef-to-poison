@@ -13,6 +13,7 @@ declare -i STEP_TEST=0
 declare -i STEP_PHORONIX=0
 
 declare -r LLVM_DIR="/llvm/llvm-project/llvm"
+declare -r PTS_INSTALL_DIR="/pts/pts-install"
 
 export DEBIAN_FRONTEND=noninteractive
 
@@ -65,10 +66,22 @@ function runPhoronix() {
         print 'ERROR: Clang executable does not exist\n'
         exit 1
     fi
+    archiveGitVersionAndChanges
     export CC="${LLVM_BIN_PATH}/clang"
     export CXX="${LLVM_BIN_PATH}/clang++"
     pushd $PHORONIX_DIR &> /dev/null
     ./run.sh
+    popd &> /dev/null
+}
+
+function archiveGitVersionAndChanges() {
+    if [ ! -d  "$PTS_INSTALL_DIR" ]; then
+        printf 'ERROR: directory %s does not exist\n' "$PTS_INSTALL_DIR"
+        exit 1
+    fi
+    pushd "${LLVM_DIR}/.." &> /dev/null
+    declare -r GIT_ID=$(git rev-parse --short HEAD)
+    git diff > "${PTS_INSTALL_DIR}/${GIT_ID}.patch"
     popd &> /dev/null
 }
 
