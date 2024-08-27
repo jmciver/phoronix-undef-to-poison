@@ -6,6 +6,10 @@ ARG USER_GID=${USER_UID}
 
 ARG PTS_WORK_DIR=/pts
 
+# NOTE 1: the setcap operator flag options "eip" stand for effective,
+# inheritable and permitted. When the container is run with capability (cap_add)
+# SYS_NICE, then process niceness is honored.
+
 RUN apt-get update && \
   apt-get -y upgrade && \
   DEBIAN_FRONTEND=noninteractive apt-get -y install \
