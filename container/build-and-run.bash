@@ -5,6 +5,8 @@ set -u
 declare -r SCRIPT_NAME=${0##*/}
 declare -r SCRIPT_PATH=${0%/*}
 
+declare -i RETURN_VALUE=0
+
 declare -r OPT_STRING="-h,-b,-p,-t"
 
 declare -i STEP_BUILD=0
@@ -29,6 +31,7 @@ function buildLLVM() {
         cmake --build --preset release1 && \
         cmake --preset release2 && \
         cmake --build --preset release2
+    RETURN_VALUE=$?
     popd &> /dev/null
 }
 
@@ -39,8 +42,9 @@ function buildDebugLLVM() {
     fi
     pushd $LLVM_DIR &> /dev/null
     [ ! -f CMakePresets.json ] && cp $HOME/CMakePresets.json .
-        cmake --preset debug && \
+    cmake --preset debug && \
         cmake --build --preset debug
+    RETURN_VALUE=$?
     popd &> /dev/null
 }
 
@@ -52,6 +56,7 @@ function testLLVM() {
     pushd $LLVM_DIR &> /dev/null
     [ ! -f CMakePresets.json ] && cp $HOME/CMakePresets.json .
     cmake --build --preset release2 -t check-all
+    RETURN_VALUE=$?
     popd &> /dev/null
 }
 
@@ -71,6 +76,7 @@ function runPhoronix() {
     export CXX="${LLVM_BIN_PATH}/clang++"
     pushd $PHORONIX_DIR &> /dev/null
     ./run.sh
+    RETURN_VALUE=$?
     popd &> /dev/null
 }
 
@@ -114,7 +120,9 @@ while [ $# -gt 0 ]; do
     shift
 done
 
-[ $STEP_BUILD -eq 1 ] && buildLLVM
-[ $STEP_BUILD_DEBUG -eq 1 ] && buildDebugLLVM
-[ $STEP_TEST -eq 1 ] && testLLVM
-[ $STEP_PHORONIX -eq 1 ] && runPhoronix
+[ $STEP_BUILD -eq 1 -a $RETURN_VALUE -eq 0 ] && buildLLVM
+[ $STEP_BUILD_DEBUG -eq 1 -a $RETURN_VALUE -eq 0 ] && buildDebugLLVM
+[ $STEP_TEST -eq 1 -a $RETURN_VALUE -eq 0 ] && testLLVM
+[ $STEP_PHORONIX -eq 1 -a $RETURN_VALUE -eq 0 ] && runPhoronix
+
+exit $RETURN_VALUE
