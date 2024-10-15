@@ -10,9 +10,11 @@ declare -i RETURN_VALUE=0
 declare -r OPT_STRING="-h,-b,-p,-t"
 
 declare -i STEP_BUILD=0
-declare -i STEP_BUILD_DEBUG=0
+declare -i STEP_BUILD_TARGET=0
 declare -i STEP_TEST=0
 declare -i STEP_PHORONIX=0
+
+declare BUILD_TARGET_NAME="debug"
 
 declare -r LLVM_DIR="/llvm/llvm-project/llvm"
 declare -r PTS_INSTALL_DIR="/pts/pts-install"
@@ -35,15 +37,15 @@ function buildLLVM() {
     popd &> /dev/null
 }
 
-function buildDebugLLVM() {
+function buildTargetByNameLLVM() {
     if [ ! -d "$LLVM_DIR" ]; then
         printf 'ERROR: LLVM directory "%s" does not exist\n' "$LLVM_DIR"
         exit 1
     fi
     pushd $LLVM_DIR &> /dev/null
     [ ! -f CMakePresets.json ] && cp $HOME/CMakePresets.json .
-    cmake --preset debug && \
-        cmake --build --preset debug
+    cmake --preset "$BUILD_TARGET_NAME" && \
+        cmake --build --preset "$BUILD_TARGET_NAME"
     RETURN_VALUE=$?
     popd &> /dev/null
 }
@@ -94,7 +96,7 @@ function archiveGitVersionAndChanges() {
 RESULT=$(getopt \
              --name "$SCRIPT_NAME" \
              --options "$OPT_STRING" \
-             --longoptions "help,build,build-debug,phoronix,test" \
+             --longoptions "help,build,build-target:,phoronix,test" \
              -- "$@")
 
 eval set -- "$RESULT"
@@ -102,14 +104,16 @@ eval set -- "$RESULT"
 while [ $# -gt 0 ]; do
     case "$1" in
         -h | --help)
-            printf "%s\n" "usage: $SCRIPT_NAME [-h|--help] [-b|--build] [--build-debug] [-p|--phoronix] [-t|--test]"
+            printf "%s\n" "usage: $SCRIPT_NAME [-h|--help] [-b|--build] [--build-target=NAME] [-p|--phoronix] [-t|--test]"
             exit 0
             ;;
         -b | --build)
             STEP_BUILD=1
             ;;
-        --build-debug)
-            STEP_BUILD_DEBUG=1
+        --build-target)
+            STEP_BUILD_TARGET=1
+            shift
+            BUILD_TARGET_NAME=$1
             ;;
         -p | --phoronix)
             STEP_PHORONIX=1
@@ -121,7 +125,7 @@ while [ $# -gt 0 ]; do
 done
 
 [ $STEP_BUILD -eq 1 -a $RETURN_VALUE -eq 0 ] && buildLLVM
-[ $STEP_BUILD_DEBUG -eq 1 -a $RETURN_VALUE -eq 0 ] && buildDebugLLVM
+[ $STEP_BUILD_TARGET -eq 1 -a $RETURN_VALUE -eq 0 ] && buildTargetByNameLLVM
 [ $STEP_TEST -eq 1 -a $RETURN_VALUE -eq 0 ] && testLLVM
 [ $STEP_PHORONIX -eq 1 -a $RETURN_VALUE -eq 0 ] && runPhoronix
 
