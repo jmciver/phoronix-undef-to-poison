@@ -48,6 +48,17 @@
             }
         },
         {
+            "name": "releaseWithDebugInfo",
+            "inherits": "default",
+            "displayName": "Ninja Release with Debug Info",
+            "description": "Build release with debug info using Ninja",
+            "binaryDir": "../../build/releaseWithDebugInfo",
+            "installDir": "../../install/releaseWithDebugInfo",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+            }
+        },
+        {
           "name": "release1",
           "inherits": "default",
           "displayName": "Ninja Release1",
@@ -84,6 +95,11 @@
             "name": "release",
             "displayName": "Ninja Release",
             "configurePreset": "release"
+        },
+        {
+            "name": "releaseWithDebugInfo",
+            "displayName": "Ninja Release with Debug Info",
+            "configurePreset": "releaseWithDebugInfo"
         },
         {
           "name": "release1",
