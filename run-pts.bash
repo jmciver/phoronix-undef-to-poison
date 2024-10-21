@@ -100,9 +100,9 @@ function helpMessage () {
 ENTRY_POINT_OPTIONS are:
 
 Build & Test:
-[-b|--build]    to build a bootstrap version of the llvm project
-[--build-debug] to build a debug version of the llvm project
-[-t|--test]     to run llvm release2 check-all target
+[-b|--build]     to build a bootstrap version of the llvm project
+[--build-target] to build a specific target from CMakePresets.json file
+[-t|--test]      to run llvm release2 check-all target
 
 Phoronix:
 [-p|--phoronix] to run Phoronix tests
