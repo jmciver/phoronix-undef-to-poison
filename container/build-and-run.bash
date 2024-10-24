@@ -27,7 +27,7 @@ function buildLLVM() {
         exit 1
     fi
     pushd $LLVM_DIR &> /dev/null
-    [ ! -f CMakePresets.json ] && cp $HOME/CMakePresets.json .
+    [ ! -f CMakePresets.json ] && cp $HOME/CMakePresetsLLVM.json CMakePresets.json
     rm -rf ../../build/release2 && \
         cmake --preset release1 && \
         cmake --build --preset release1 && \
