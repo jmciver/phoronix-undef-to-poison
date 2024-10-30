@@ -27,7 +27,7 @@ function buildLLVM() {
         exit 1
     fi
     pushd $LLVM_DIR &> /dev/null
-    [ ! -f CMakePresets.json ] && cp $HOME/CMakePresetsLLVM.json CMakePresets.json
+    copyCMakePresetsJSON
     rm -rf ../../build/release2 && \
         cmake --preset release1 && \
         cmake --build --preset release1 && \
@@ -43,7 +43,7 @@ function buildTargetByNameLLVM() {
         exit 1
     fi
     pushd $LLVM_DIR &> /dev/null
-    [ ! -f CMakePresets.json ] && cp $HOME/CMakePresets.json .
+    copyCMakePresetsJSON
     cmake --preset "$BUILD_TARGET_NAME" && \
         cmake --build --preset "$BUILD_TARGET_NAME"
     RETURN_VALUE=$?
@@ -56,7 +56,7 @@ function testLLVM() {
         exit 1
     fi
     pushd $LLVM_DIR &> /dev/null
-    [ ! -f CMakePresets.json ] && cp $HOME/CMakePresets.json .
+    copyCMakePresetsJSON
     cmake --build --preset release2 -t check-all
     RETURN_VALUE=$?
     popd &> /dev/null
@@ -80,6 +80,10 @@ function runPhoronix() {
     ./run.sh
     RETURN_VALUE=$?
     popd &> /dev/null
+}
+
+function copyCMakePresetsJSON() {
+    [ ! -f CMakePresets.json ] && cp $HOME/CMakePresetsLLVM.json CMakePresets.json
 }
 
 function archiveGitVersionAndChanges() {
