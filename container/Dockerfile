@@ -10,6 +10,9 @@ ARG PTS_WORK_DIR=/pts
 # inheritable and permitted. When the container is run with capability (cap_add)
 # SYS_NICE, then process niceness is honored.
 
+# NOTE 2: packages rec2, z3, and libz3-dev are added for Alive2 build
+# support.
+
 RUN apt-get update && \
   apt-get -y upgrade && \
   DEBIAN_FRONTEND=noninteractive apt-get -y install \
@@ -37,6 +40,7 @@ RUN apt-get update && \
     libfreetype6-dev \
     libjpeg-dev \
     libnl-genl-3-dev \
+    libz3-dev \
     locales \
     mesa-utils \
     nasm \
@@ -48,6 +52,7 @@ RUN apt-get update && \
     pkg-config \
     python3 \
     python3-psutil \
+    re2c \
     sudo \
     tcl \
     tclsh \
@@ -55,6 +60,7 @@ RUN apt-get update && \
     vulkan-tools \
     xorg-dev \
     yasm \
+    z3 \
     zlib1g-dev && \
   apt-get clean autoclean && \
   rm -rf /var/lib/apt/lists/* && \
