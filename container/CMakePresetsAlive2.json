@@ -1,0 +1,56 @@
+{
+    "version": 6,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 23,
+        "patch": 0
+    },
+    "configurePresets": [
+        {
+            "name": "default",
+            "displayName": "Default Config",
+            "description": "Common build configuration for Alive2",
+            "generator": "Ninja",
+            "cacheVariables": {
+                "CMAKE_PREFIX_PATH": "/llvm/build/release1",
+                "Z3_INCLUDE_DIR": "/usr/include",
+                "Z3_LIBRARIES": "/usr/lib/x86_64-linux-gnu/libz3.so.4",
+                "BUILD_TV": "1"
+            }
+        },
+        {
+            "name": "debug",
+            "inherits": "default",
+            "displayName": "Ninja Debug",
+            "description": "Build debug using Ninja",
+            "binaryDir": "build/debug",
+            "installDir": "install/debug",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "release",
+            "inherits": "default",
+            "displayName": "Ninja Release",
+            "description": "Build release using Ninja",
+            "binaryDir": "build/release",
+            "installDir": "install/release",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "debug",
+            "displayName": "Ninja Debug",
+            "configurePreset": "debug"
+        },
+        {
+            "name": "release",
+            "displayName": "Ninja Release",
+            "configurePreset": "release"
+        }
+    ]
+}

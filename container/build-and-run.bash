@@ -9,14 +9,18 @@ declare -i RETURN_VALUE=0
 
 declare -r OPT_STRING="-h,-b,-p,-t"
 
-declare -i STEP_BUILD=0
-declare -i STEP_BUILD_TARGET=0
+declare -i STEP_LLVM_BUILD=0
+declare -i STEP_LLVM_BUILD_TARGET=0
 declare -i STEP_TEST=0
 declare -i STEP_PHORONIX=0
 
-declare BUILD_TARGET_NAME="debug"
+declare LLVM_BUILD_TARGET_NAME="debug"
 
+declare -i STEP_ALIVE2_BUILD=0
+
+declare -r ALIVE2_DIR="/llvm/alive2"
 declare -r LLVM_DIR="/llvm/llvm-project/llvm"
+declare -r LLVM_RELEASE1="/llvm/build/release1"
 declare -r PTS_INSTALL_DIR="/pts/pts-install"
 
 export DEBIAN_FRONTEND=noninteractive
@@ -27,7 +31,7 @@ function buildLLVM() {
         exit 1
     fi
     pushd $LLVM_DIR &> /dev/null
-    copyCMakePresetsJSON
+    copyLLVMCMakePresetsJSON
     rm -rf ../../build/release2 && \
         cmake --preset release1 && \
         cmake --build --preset release1 && \
@@ -43,9 +47,9 @@ function buildTargetByNameLLVM() {
         exit 1
     fi
     pushd $LLVM_DIR &> /dev/null
-    copyCMakePresetsJSON
-    cmake --preset "$BUILD_TARGET_NAME" && \
-        cmake --build --preset "$BUILD_TARGET_NAME"
+    copyLLVMCMakePresetsJSON
+    cmake --preset "$LLVM_BUILD_TARGET_NAME" && \
+        cmake --build --preset "$LLVM_BUILD_TARGET_NAME"
     RETURN_VALUE=$?
     popd &> /dev/null
 }
@@ -56,8 +60,20 @@ function testLLVM() {
         exit 1
     fi
     pushd $LLVM_DIR &> /dev/null
-    copyCMakePresetsJSON
+    copyLLVMCMakePresetsJSON
     cmake --build --preset release2 -t check-all
+    RETURN_VALUE=$?
+    popd &> /dev/null
+}
+
+function buildAlive2() {
+    if [ ! -d "$LLVM_RELEASE1" ]; then
+        printf 'ERROR: LLVM build directory "%s" does not exist. Build LLVM first.\n' "$LLVM_RELEASE1"
+        exit 1
+    fi
+    pushd "$ALIVE2_DIR" &> /dev/null
+    copyAlive2CMakePresetsJSON
+    cmake --preset release && cmake --build --preset release
     RETURN_VALUE=$?
     popd &> /dev/null
 }
@@ -82,8 +98,12 @@ function runPhoronix() {
     popd &> /dev/null
 }
 
-function copyCMakePresetsJSON() {
+function copyLLVMCMakePresetsJSON() {
     [ ! -f CMakePresets.json ] && cp $HOME/CMakePresetsLLVM.json CMakePresets.json
+}
+
+function copyAlive2CMakePresetsJSON() {
+    [ ! -f CMakePresets.json ] && cp $HOME/CMakePresetsAlive2.json CMakePresets.json
 }
 
 function archiveGitVersionAndChanges() {
@@ -100,7 +120,7 @@ function archiveGitVersionAndChanges() {
 RESULT=$(getopt \
              --name "$SCRIPT_NAME" \
              --options "$OPT_STRING" \
-             --longoptions "help,build,build-target:,phoronix,test" \
+             --longoptions "help,build-alive2,build,build-target:,phoronix,test" \
              -- "$@")
 
 eval set -- "$RESULT"
@@ -108,14 +128,17 @@ eval set -- "$RESULT"
 while [ $# -gt 0 ]; do
     case "$1" in
         -h | --help)
-            printf "%s\n" "usage: $SCRIPT_NAME [-h|--help] [-b|--build] [--build-target=NAME] [-p|--phoronix] [-t|--test]"
+            printf "%s\n" "usage: $SCRIPT_NAME [-h|--help] [-b|--build] [--build-target=NAME] [--build-alive2] [-p|--phoronix] [-t|--test]"
             exit 0
             ;;
         -b | --build)
-            STEP_BUILD=1
+            STEP_LLVM_BUILD=1
+            ;;
+        --build-alive2)
+            STEP_ALIVE2_BUILD=1
             ;;
         --build-target)
-            STEP_BUILD_TARGET=1
+            STEP_LLVM_BUILD_TARGET=1
             shift
             BUILD_TARGET_NAME=$1
             ;;
@@ -128,9 +151,10 @@ while [ $# -gt 0 ]; do
     shift
 done
 
-[ $STEP_BUILD -eq 1 -a $RETURN_VALUE -eq 0 ] && buildLLVM
-[ $STEP_BUILD_TARGET -eq 1 -a $RETURN_VALUE -eq 0 ] && buildTargetByNameLLVM
+[ $STEP_LLVM_BUILD -eq 1 -a $RETURN_VALUE -eq 0 ] && buildLLVM
+[ $STEP_LLVM_BUILD_TARGET -eq 1 -a $RETURN_VALUE -eq 0 ] && buildTargetByNameLLVM
 [ $STEP_TEST -eq 1 -a $RETURN_VALUE -eq 0 ] && testLLVM
+[ $STEP_ALIVE2_BUILD -eq 1 ] && buildAlive2
 [ $STEP_PHORONIX -eq 1 -a $RETURN_VALUE -eq 0 ] && runPhoronix
 
 exit $RETURN_VALUE

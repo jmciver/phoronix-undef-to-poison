@@ -54,10 +54,13 @@ usage: run-pts.bash [-h|--help] [--interactive] [--no-cpu-checks] [--cpu-set] [-
 
 ENTRY_POINT_OPTIONS are:
 
-Build & Test:
-[-b|--build]          to build a bootstrap version of the llvm project
-[--build-target=NAME] to build a CMakePresets.json target
-[-t|--test]           to run llvm release2 check-all target
+Alive2 Build:
+[--build-alive2]  to build Alive2 using LLVM release1 build
+
+LLVM Build & Test:
+[-b|--build]     to build a bootstrap version of the llvm project
+[--build-target] to build a specific target from CMakePresets.json file
+[-t|--test]      to run llvm release2 check-all target
 
 Phoronix:
 [-p|--phoronix] to run Phoronix tests
