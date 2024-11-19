@@ -100,12 +100,13 @@ function helpMessage () {
 ENTRY_POINT_OPTIONS are:
 
 Alive2 Build:
-[--build-alive2]  to build Alive2 using LLVM release1 build
+[--build-alive2] build Alive2 using LLVM release1 build
+[--test-alive2]  run translational validation on llvm-lit tests
 
 LLVM Build & Test:
-[-b|--build]     to build a bootstrap version of the llvm project
-[--build-target] to build a specific target from CMakePresets.json file
-[-t|--test]      to run llvm release2 check-all target
+[-b|--build]     build a bootstrap version of the llvm project
+[--build-target] build a specific target from CMakePresets.json file
+[-t|--test]      run llvm release2 check-all target
 
 Phoronix:
 [-p|--phoronix] to run Phoronix tests
