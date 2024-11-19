@@ -91,7 +91,7 @@ function alive2TranslationValidation() {
         printf 'ERROR: Alive2 build directory "%s" does not exist. Build Alive2 first.\n' "$ALIVE2_BUILD_DIR"
         exit 1
     fi
-    "${LLVM_RELEASE1}/bin/llvm-lit" '-s' "-Dopt=${ALIVE2_BUILD_DIR}/opt-alive.sh" "$LLVM_PROJECT_DIR"
+    "${LLVM_RELEASE1}/bin/llvm-lit" '-s' "-Dopt=${ALIVE2_BUILD_DIR}/opt-alive.sh" "${LLVM_PROJECT_DIR}/llvm/test"
     RETURN_VALUE=$?
 }
 
