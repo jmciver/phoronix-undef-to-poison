@@ -159,7 +159,7 @@ while [ $# -gt 0 ]; do
         --build-target)
             STEP_LLVM_BUILD_TARGET=1
             shift
-            BUILD_TARGET_NAME=$1
+            LLVM_BUILD_TARGET_NAME=$1
             ;;
         -p | --phoronix)
             STEP_PHORONIX=1
