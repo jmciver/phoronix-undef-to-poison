@@ -19,13 +19,15 @@ declare LLVM_BUILD_TARGET_NAME="debug"
 declare -i STEP_ALIVE2_BUILD=0
 declare -i STEP_ALIVE2_TEST=0
 
-declare -r ALIVE2_DIR="/llvm/alive2"
-declare -r ALIVE2_BUILD_DIR="${ALIVE2_DIR}/build/release"
 declare -r LLVM_PROJECT_DIR="/llvm/llvm-project"
 declare -r LLVM_DIR="${LLVM_PROJECT_DIR}/llvm"
 declare -r LLVM_RELEASE1="/llvm/build/release1"
 declare -r LLVM_RELEASE2="/llvm/build/release2"
 declare -r PTS_INSTALL_DIR="/pts/pts-install"
+
+declare -r ALIVE2_DIR="/llvm/alive2"
+declare -r ALIVE2_BUILD_DIR="${ALIVE2_DIR}/build/release"
+declare ALIVE2_LLVMLIT_TEST_PATH="${LLVM_PROJECT_DIR}/llvm/test"
 
 export DEBIAN_FRONTEND=noninteractive
 
@@ -91,7 +93,7 @@ function alive2TranslationValidation() {
         printf 'ERROR: Alive2 build directory "%s" does not exist. Build Alive2 first.\n' "$ALIVE2_BUILD_DIR"
         exit 1
     fi
-    "${LLVM_RELEASE1}/bin/llvm-lit" '-s' "-Dopt=${ALIVE2_BUILD_DIR}/opt-alive.sh" "${LLVM_PROJECT_DIR}/llvm/test"
+    "${LLVM_RELEASE1}/bin/llvm-lit" '-s' "-Dopt=${ALIVE2_BUILD_DIR}/opt-alive.sh" "$ALIVE2_LLVMLIT_TEST_PATH"
     RETURN_VALUE=$?
 }
 
@@ -137,7 +139,7 @@ function archiveGitVersionAndChanges() {
 RESULT=$(getopt \
              --name "$SCRIPT_NAME" \
              --options "$OPT_STRING" \
-             --longoptions "help,build-alive2,build,build-target:,phoronix,test,test-alive2" \
+             --longoptions "help,build-alive2,build,build-target:,phoronix,test,test-alive2::" \
              -- "$@")
 
 eval set -- "$RESULT"
@@ -145,7 +147,7 @@ eval set -- "$RESULT"
 while [ $# -gt 0 ]; do
     case "$1" in
         -h | --help)
-            printf "%s\n" "usage: $SCRIPT_NAME [-h|--help] [-b|--build] [--build-target=NAME] [--build-alive2] [-p|--phoronix] [-t|--test] [--test-alive2]"
+            printf "%s\n" "usage: $SCRIPT_NAME [-h|--help] [-b|--build] [--build-target=NAME] [--build-alive2] [-p|--phoronix] [-t|--test] [--test-alive2[=PATH]]"
             exit 0
             ;;
         -b | --build)
@@ -167,6 +169,10 @@ while [ $# -gt 0 ]; do
             ;;
         --test-alive2)
             STEP_ALIVE2_TEST=1
+            if [ ! -z "$2" ]; then
+                ALIVE2_LLVMLIT_TEST_PATH=$2
+                shift
+            fi
             ;;
     esac
     shift
