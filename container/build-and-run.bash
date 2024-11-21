@@ -32,10 +32,7 @@ declare ALIVE2_LLVMLIT_TEST_PATH="${LLVM_PROJECT_DIR}/llvm/test"
 export DEBIAN_FRONTEND=noninteractive
 
 function buildLLVM() {
-    if [ ! -d "$LLVM_DIR" ]; then
-        printf 'ERROR: LLVM directory "%s" does not exist\n' "$LLVM_DIR"
-        exit 1
-    fi
+    checkForLLVMDirectory
     pushd $LLVM_DIR &> /dev/null
     copyLLVMCMakePresetsJSON
     rm -rf ../../build/release2 && \
@@ -48,10 +45,7 @@ function buildLLVM() {
 }
 
 function buildTargetByNameLLVM() {
-    if [ ! -d "$LLVM_DIR" ]; then
-        printf 'ERROR: LLVM directory "%s" does not exist\n' "$LLVM_DIR"
-        exit 1
-    fi
+    checkForLLVMDirectory
     pushd $LLVM_DIR &> /dev/null
     copyLLVMCMakePresetsJSON
     cmake --preset "$LLVM_BUILD_TARGET_NAME" && \
@@ -61,10 +55,7 @@ function buildTargetByNameLLVM() {
 }
 
 function testLLVM() {
-    if [ ! -d "$LLVM_DIR" ]; then
-        printf 'ERROR: LLVM directory "%s" does not exist\n' "$LLVM_DIR"
-        exit 1
-    fi
+    checkForLLVMDirectory
     pushd $LLVM_DIR &> /dev/null
     copyLLVMCMakePresetsJSON
     cmake --build --preset release2 -t check-all
@@ -73,10 +64,7 @@ function testLLVM() {
 }
 
 function buildAlive2() {
-    if [ ! -d "$LLVM_RELEASE1" ]; then
-        printf 'ERROR: LLVM build directory "%s" does not exist. Build LLVM first.\n' "$LLVM_RELEASE1"
-        exit 1
-    fi
+    checkForBuildDirectory "LLVM" "$LLVM_RELEASE1"
     pushd "$ALIVE2_DIR" &> /dev/null
     copyAlive2CMakePresetsJSON
     cmake --preset release && cmake --build --preset release
@@ -85,16 +73,26 @@ function buildAlive2() {
 }
 
 function alive2TranslationValidation() {
-    if [ ! -d "$LLVM_RELEASE1" ]; then
-        printf 'ERROR: LLVM build directory "%s" does not exist. Build LLVM first.\n' "$LLVM_RELEASE1"
-        exit 1
-    fi
-    if [ ! -d "$ALIVE2_BUILD_DIR" ]; then
-        printf 'ERROR: Alive2 build directory "%s" does not exist. Build Alive2 first.\n' "$ALIVE2_BUILD_DIR"
-        exit 1
-    fi
+    checkForBuildDirectory "LLVM" "$LLVM_RELEASE1"
+    checkForBuildDirectory "Alive2" "$ALIVE2_BUILD_DIR"
     "${LLVM_RELEASE1}/bin/llvm-lit" '-s' "-Dopt=${ALIVE2_BUILD_DIR}/opt-alive.sh" "$ALIVE2_LLVMLIT_TEST_PATH"
     RETURN_VALUE=$?
+}
+
+function checkForLLVMDirectory() {
+    if [ ! -d "$LLVM_DIR" ]; then
+        printf 'ERROR: LLVM directory "%s" does not exist\n' "$LLVM_DIR"
+        exit 1
+    fi
+}
+
+function checkForBuildDirectory() {
+    declare buildName=$1
+    declare buildPath=$2
+    if [ ! -d "$buildPath" ]; then
+        printf 'ERROR: %s build directory "%s" does not exist. Build %s first.\n' "$buildName" "$buildPath" "$buildName"
+        exit 1
+    fi
 }
 
 function runPhoronix() {
