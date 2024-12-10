@@ -140,6 +140,10 @@ RESULT=$(getopt \
              --longoptions "help,build-alive2,build,build-target:,phoronix,test,test-alive2::" \
              -- "$@")
 
+if [ $? -ne 0 ]; then
+    exit 1
+fi
+
 eval set -- "$RESULT"
 
 while [ $# -gt 0 ]; do
