@@ -134,6 +134,17 @@ function archiveGitVersionAndChanges() {
     popd &> /dev/null
 }
 
+function helpMessage() {
+    cat <<-EOF
+Usage: $SCRIPT_NAME [OPTION]...
+  -h, --help               Help message
+  -b, --build              Build phase 1 and 2 of bootstrap build
+      --build-target=NAME  Build specific CMakePresets.json target name
+  -t, --test               Run check-all using phase 2
+      --test-alive2=PATH   Execute alive2 TV run using llvm-lit path
+  -p, --phoronix           Run Phoronix testsuite
+EOF
+}
 RESULT=$(getopt \
              --name "$SCRIPT_NAME" \
              --options "$OPT_STRING" \
@@ -149,7 +160,7 @@ eval set -- "$RESULT"
 while [ $# -gt 0 ]; do
     case "$1" in
         -h | --help)
-            printf "%s\n" "usage: $SCRIPT_NAME [-h|--help] [-b|--build] [--build-target=NAME] [--build-alive2] [-p|--phoronix] [-t|--test] [--test-alive2[=PATH]]"
+            helpMessage
             exit 0
             ;;
         -b | --build)
