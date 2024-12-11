@@ -50,21 +50,29 @@ user building the container.
 Container based building and performance benchmarking is accomplished using
 `run-pts.bash`:
 ```
-usage: run-pts.bash [-h|--help] [--interactive] [--no-cpu-checks] [--cpu-set] [--cpu-unset] [--cpu-info] --llvm=PATH -- ENTRY_POINT_OPTIONS
+Usage: run-pts.bash [OPTION]... [-- ENTRY_POINT_OPTIONS]
+  -h, --help                  Help message
+
+      --no-cpu-checks         Do not fail, just warn, on CPU goverence checks
+      --cpu-set               Set CPU governece to performance, disable trubo
+                              boost and Hyper threading for Phoronix runs
+      --cpu-unset             Undo --cpu-set
+
+      --container-type=TYPE   The type can be docker or apptainer
+      --interactive           Start container in interactive mode,
+                              ENTRY_POINT_OPTIONS have not effect
+
+      --llvm=PATH             Path to llvm-project, also where alive2 is located
 
 ENTRY_POINT_OPTIONS are:
 
-Alive2 Build:
-[--build-alive2] build Alive2 using LLVM release1 build
-[--test-alive2]  run translational validation on llvm-lit tests
-
-LLVM Build & Test:
-[-b|--build]     build a bootstrap version of the llvm project
-[--build-target] build a specific target from CMakePresets.json file
-[-t|--test]      run llvm release2 check-all target
-
-Phoronix:
-[-p|--phoronix] to run Phoronix tests
+Usage: build-and-run.bash [OPTION]...
+  -h, --help               Help message
+  -b, --build              Build phase 1 and 2 of bootstrap build
+      --build-target=NAME  Build specific CMakePresets.json target name
+  -t, --test               Run check-all using phase 2
+      --test-alive2=PATH   Execute alive2 TV run using llvm-lit path
+  -p, --phoronix           Run Phoronix testsuite
 ```
 ### Advanced
 

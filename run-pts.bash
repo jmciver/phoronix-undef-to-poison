@@ -110,22 +110,25 @@ function checkContainerType() {
 
 function helpMessage () {
     cat <<-EOF
+Usage: $SCRIPT_NAME [OPTION]... [-- ENTRY_POINT_OPTIONS]
+  -h, --help                  Help message
+
+      --no-cpu-checks         Do not fail, just warn, on CPU governance checks
+      --cpu-set               Set CPU governance to performance, disable turbo
+                              boost and Hyper threading for Phoronix runs
+      --cpu-unset             Undo --cpu-set
+
+      --container-type=TYPE   The type can be docker or apptainer
+      --interactive           Start container in interactive mode,
+                              ENTRY_POINT_OPTIONS have not effect
+
+      --llvm=PATH             Path to llvm-project, also where alive2 is located
 
 ENTRY_POINT_OPTIONS are:
 
-Alive2 Build:
-[--build-alive2] build Alive2 using LLVM release1 build
-[--test-alive2]  run translational validation on llvm-lit tests
-
-LLVM Build & Test:
-[-b|--build]     build a bootstrap version of the llvm project
-[--build-target] build a specific target from CMakePresets.json file
-[-t|--test]      run llvm release2 check-all target
-
-Phoronix:
-[-p|--phoronix] to run Phoronix tests
-
 EOF
+    "${SCRIPT_PATH}/container/build-and-run.bash" --help
+    echo ""
 }
 
 function runDocker() {
@@ -193,7 +196,6 @@ eval set -- "$RESULT"
 while [ $# -gt 0 ]; do
     case "$1" in
         -h | --help)
-            printf "%s\n" "usage: $SCRIPT_NAME [-h|--help] [--interactive] [--no-cpu-checks] [--cpu-set] [--cpu-unset] [--cpu-info] [--container-type=TYPE] --llvm=PATH -- ENTRY_POINT_OPTIONS"
             helpMessage
             exit 0
             ;;
