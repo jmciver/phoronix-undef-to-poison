@@ -16,7 +16,11 @@ declare -i CPU_CHECK_FAIL=1
 
 declare -i INTERACTIVE=0
 
+declare -ar CONTAINERS=("docker", "apptainer")
+declare CONTAINER_TYPE="docker"
+
 declare LLVM_PATH=""
+
 
 function setCpuConfiguration() {
     echo "1" | sudo tee $CPU_TURBO_BOOST
@@ -94,6 +98,16 @@ function checkCpuGovernor() {
     fi
 }
 
+function checkContainerType() {
+    for ((I=0; I < ${#CONTAINERS[@]}; I++)); do
+        if [ "$CONTAINER_TYPE" = "${CONTAINERS[$I]}" ]; then
+            return 0
+        fi
+    done
+    printf 'ERROR: container type "%s" is not defined\n' "$CONTAINER_TYPE"
+    return 1
+}
+
 function helpMessage () {
     cat <<-EOF
 
@@ -114,6 +128,55 @@ Phoronix:
 EOF
 }
 
+function runDocker() {
+    if [ $INTERACTIVE -eq 1 ]; then
+        docker \
+            run \
+            -it \
+            --rm \
+            --cap-add SYS_NICE \
+            --ulimit core=0 \
+            --mount type=bind,source="$(pwd)",target="/pts/phoronix" \
+            --mount type=bind,source="$PTS_INSTALL",target="/pts/pts-install" \
+            --mount type=bind,source="$LLVM_PATH",target="/llvm" \
+            --entrypoint=/usr/bin/bash \
+            pts-test:1
+    else
+        docker \
+            run \
+            -it \
+            --rm \
+            --cap-add SYS_NICE \
+            --ulimit core=0 \
+            --mount type=bind,source="$(pwd)",target="/pts/phoronix" \
+            --mount type=bind,source="$PTS_INSTALL",target="/pts/pts-install" \
+            --mount type=bind,source="$LLVM_PATH",target="/llvm" \
+            pts-test:1 "$@"
+    fi
+}
+
+function runApptainer() {
+    if [ $INTERACTIVE -eq 1 ]; then
+        apptainer \
+            shell \
+            --no-home \
+            --containall \
+            --mount type=bind,source="$(pwd)",target="/pts/phoronix" \
+            --mount type=bind,source="$PTS_INSTALL",target="/pts/pts-install" \
+            --mount type=bind,source="$LLVM_PATH",target="/llvm" \
+            "${SCRIPT_PATH}/container/pts-test.sif"
+    else
+        apptainer \
+            run \
+            --no-home \
+            --containall \
+            --mount type=bind,source="$(pwd)",target="/pts/phoronix" \
+            --mount type=bind,source="$PTS_INSTALL",target="/pts/pts-install" \
+            --mount type=bind,source="$LLVM_PATH",target="/llvm" \
+            "${SCRIPT_PATH}/container/pts-test.sif" "$@"
+    fi
+}
+
 if [ ! -d "$PTS_INSTALL" ]; then
     printf "INFO: making pts install/build directory %s\n" "$PTS_INSTALL"
     mkdir -p "$PTS_INSTALL" || exit 1
@@ -122,7 +185,7 @@ fi
 RESULT=$(getopt \
              --name "$SCRIPT_NAME" \
              --options "$OPT_STRING" \
-             --longoptions "help,interactive,llvm:,no-cpu-checks,cpu-set,cpu-unset,cpu-info" \
+             --longoptions "help,container-type:,interactive,llvm:,no-cpu-checks,cpu-set,cpu-unset,cpu-info" \
              -- "$@")
 
 eval set -- "$RESULT"
@@ -130,7 +193,7 @@ eval set -- "$RESULT"
 while [ $# -gt 0 ]; do
     case "$1" in
         -h | --help)
-            printf "%s\n" "usage: $SCRIPT_NAME [-h|--help] [--interactive] [--no-cpu-checks] [--cpu-set] [--cpu-unset] [--cpu-info] --llvm=PATH -- ENTRY_POINT_OPTIONS"
+            printf "%s\n" "usage: $SCRIPT_NAME [-h|--help] [--interactive] [--no-cpu-checks] [--cpu-set] [--cpu-unset] [--cpu-info] [--container-type=TYPE] --llvm=PATH -- ENTRY_POINT_OPTIONS"
             helpMessage
             exit 0
             ;;
@@ -157,6 +220,11 @@ while [ $# -gt 0 ]; do
             checkCpuSettings
             exit 0
             ;;
+        --container-type)
+            shift
+            CONTAINER_TYPE=$1
+            checkContainerType || exit 1
+            ;;
         --)
             shift
             break
@@ -177,28 +245,11 @@ if [ ! -d "$LLVM_PATH" ]; then
     exit 1
 fi
 
-if [ $INTERACTIVE -eq 1 ]; then
-   docker \
-       run \
-       -it \
-       --rm \
-       --cap-add SYS_NICE \
-       --ulimit core=0 \
-       --mount type=bind,source="$(pwd)",target="/pts/phoronix" \
-       --mount type=bind,source="$PTS_INSTALL",target="/pts/pts-install" \
-       --mount type=bind,source="$LLVM_PATH",target="/llvm" \
-       --entrypoint=/usr/bin/bash \
-       pts-test:1
-   exit 0
-fi
-
-docker \
-    run \
-    -it \
-    --rm \
-    --cap-add SYS_NICE \
-    --ulimit core=0 \
-    --mount type=bind,source="$(pwd)",target="/pts/phoronix" \
-    --mount type=bind,source="$PTS_INSTALL",target="/pts/pts-install" \
-    --mount type=bind,source="$LLVM_PATH",target="/llvm" \
-    pts-test:1 $@
+case "$CONTAINER_TYPE" in
+    docker)
+        runDocker "$@"
+        ;;
+    apptainer)
+        runApptainer "$@"
+        ;;
+esac
