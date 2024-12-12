@@ -116,11 +116,11 @@ function runPhoronix() {
 }
 
 function copyLLVMCMakePresetsJSON() {
-    [ ! -f CMakePresets.json ] && cp $HOME/CMakePresetsLLVM.json CMakePresets.json
+    [ ! -f CMakePresets.json ] && cp "${SCRIPT_PATH}/CMakePresetsLLVM.json" CMakePresets.json
 }
 
 function copyAlive2CMakePresetsJSON() {
-    [ ! -f CMakePresets.json ] && cp $HOME/CMakePresetsAlive2.json CMakePresets.json
+    [ ! -f CMakePresets.json ] && cp "${SCRIPT_PATH}/CMakePresetsAlive2.json" CMakePresets.json
 }
 
 function archiveGitVersionAndChanges() {
