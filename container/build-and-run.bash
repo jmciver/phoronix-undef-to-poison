@@ -3,7 +3,8 @@
 set -u
 
 declare -r SCRIPT_NAME=${0##*/}
-declare -r SCRIPT_PATH=${0%/*}
+declare -r SCRIPT_PATH_FULL=$(realpath $0)
+declare -r SCRIPT_PATH=${SCRIPT_PATH_FULL%/*}
 
 declare -i RETURN_VALUE=0
 
