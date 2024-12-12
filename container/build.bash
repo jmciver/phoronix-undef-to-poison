@@ -28,7 +28,7 @@ function buildApptainer() {
     rm -rf "$APPTAINER_SIF_NAME" && \
         apptainer \
             build \
-            --build-arg "USER_HOME=${USER_NAME}" \
+            --build-arg "USER_HOME=ptr" \
             "$APPTAINER_SIF_NAME" \
             Apptainer
 }
