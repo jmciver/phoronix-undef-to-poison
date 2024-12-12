@@ -123,3 +123,4 @@ ps -o pid,psr,comm -p PROCESS_ID
 ## References
 
 * [cpupower command](https://wiki.archlinux.org/title/CPU_frequency_scaling)
+* [HPC and containers tutorial](https://containers-at-tacc.readthedocs.io/en/latest/containers/00.overview.html)
