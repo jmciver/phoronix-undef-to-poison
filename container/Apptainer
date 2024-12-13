@@ -70,6 +70,7 @@ From: ubuntu:{{ VERSION }}
 
 %environment
   export LANG=en_US.utf8
+  export HOME=/tmp
 
 %runscript
   /home/{{ USER_HOME }}/build-and-run.bash "$@"
