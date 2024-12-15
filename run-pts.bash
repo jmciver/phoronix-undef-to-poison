@@ -191,6 +191,10 @@ RESULT=$(getopt \
              --longoptions "help,container-type:,interactive,llvm:,no-cpu-checks,cpu-set,cpu-unset,cpu-info" \
              -- "$@")
 
+if [ $? -ne 0 ]; then
+    exit 1
+fi
+
 eval set -- "$RESULT"
 
 while [ $# -gt 0 ]; do
