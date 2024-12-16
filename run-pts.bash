@@ -122,6 +122,8 @@ Usage: $SCRIPT_NAME [OPTION]... [-- ENTRY_POINT_OPTIONS]
       --interactive           Start container in interactive mode,
                               ENTRY_POINT_OPTIONS have not effect
 
+      --list-jobs             List jobs/tests specified in categorized-profiles.txt
+
       --llvm=PATH             Path to llvm-project, also where alive2 is located
 
 ENTRY_POINT_OPTIONS are:
@@ -129,6 +131,16 @@ ENTRY_POINT_OPTIONS are:
 EOF
     "${SCRIPT_PATH}/container/build-and-run.bash" --help
     echo ""
+}
+
+function listJobIds() {
+    declare -a jobIds=()
+    for name in $(grep -v -E '^(#|/build-)' "${SCRIPT_PATH}/phoronix-scripts/categorized-profiles.txt"); do
+	jobIds+=("$name")
+    done
+    for ((i=0; i<${#jobIds[*]}; i++)); do
+        printf '%2d. %s\n' "$i" "${jobIds[$i]}"
+    done
 }
 
 function runDocker() {
@@ -188,7 +200,7 @@ fi
 RESULT=$(getopt \
              --name "$SCRIPT_NAME" \
              --options "$OPT_STRING" \
-             --longoptions "help,container-type:,interactive,llvm:,no-cpu-checks,cpu-set,cpu-unset,cpu-info" \
+             --longoptions "help,container-type:,interactive,llvm:,list-jobs,no-cpu-checks,cpu-set,cpu-unset,cpu-info" \
              -- "$@")
 
 if [ $? -ne 0 ]; then
@@ -230,6 +242,10 @@ while [ $# -gt 0 ]; do
             shift
             CONTAINER_TYPE=$1
             checkContainerType || exit 1
+            ;;
+        --list-jobs)
+            listJobIds
+            exit 0
             ;;
         --)
             shift
