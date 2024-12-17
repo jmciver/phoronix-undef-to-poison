@@ -13,6 +13,7 @@ declare -r OPT_STRING="-h,-b,-p,-t"
 declare -i STEP_LLVM_BUILD=0
 declare -i STEP_LLVM_BUILD_TARGET=0
 declare -i STEP_LLVM_TEST=0
+declare -i STEP_LIST_JOBS=0
 declare -i STEP_PHORONIX=0
 
 declare LLVM_BUILD_TARGET_NAME="debug"
@@ -29,6 +30,10 @@ declare -r PTS_INSTALL_DIR="/pts/pts-install"
 declare -r ALIVE2_DIR="/llvm/alive2"
 declare -r ALIVE2_BUILD_DIR="${ALIVE2_DIR}/build/release"
 declare ALIVE2_LLVMLIT_TEST_PATH="${LLVM_PROJECT_DIR}/llvm/test"
+
+declare -r PHORONIX_DIR="/pts/phoronix/phoronix-scripts"
+declare -a PTS_JOB_IDS=()
+declare -r PTS_JOBS_FILE="${PHORONIX_DIR}/categorized-profiles.txt"
 
 export DEBIAN_FRONTEND=noninteractive
 
@@ -96,8 +101,23 @@ function checkForBuildDirectory() {
     fi
 }
 
+function loadJobIds() {
+    if [ ! -f "$PTS_JOBS_FILE" ]; then
+        printf 'ERROR: PTS jobs file "%s" does not exist.\n' "$PTS_JOBS_FILE"
+        exit 1
+    fi
+    for name in $(grep -v -E '^(#|/build-)' "${PTS_JOBS_FILE}"); do
+	PTS_JOB_IDS+=("$name")
+    done
+}
+
+function printJobIds() {
+    for ((i=0; i<${#PTS_JOB_IDS[*]}; i++)); do
+        printf '%2d. %s\n' "$i" "${PTS_JOB_IDS[$i]}"
+    done
+}
+
 function runPhoronix() {
-    declare -r PHORONIX_DIR="/pts/phoronix/phoronix-scripts"
     if [ ! -d "$PHORONIX_DIR" ]; then
         printf 'ERROR: Phonronix scripts directory "%s\n" does not exist' "$PHORONIX_DIR"
         exit 1
@@ -139,17 +159,21 @@ function helpMessage() {
     cat <<-EOF
 Usage: $SCRIPT_NAME [OPTION]...
   -h, --help               Help message
+
   -b, --build              Build phase 1 and 2 of bootstrap build
       --build-target=NAME  Build specific CMakePresets.json target name
+
   -t, --test               Run check-all using phase 2
       --test-alive2=PATH   Execute alive2 TV run using llvm-lit path
+
+      --list-jobs          List jobs/tests specified in categorized-profiles.txt
   -p, --phoronix           Run Phoronix testsuite
 EOF
 }
 RESULT=$(getopt \
              --name "$SCRIPT_NAME" \
              --options "$OPT_STRING" \
-             --longoptions "help,build-alive2,build,build-target:,phoronix,test,test-alive2::" \
+             --longoptions "help,build-alive2,build,build-target:,list-jobs,phoronix,test,test-alive2::" \
              -- "$@")
 
 if [ $? -ne 0 ]; then
@@ -188,6 +212,9 @@ while [ $# -gt 0 ]; do
                 shift
             fi
             ;;
+        --list-jobs)
+            STEP_LIST_JOBS=1
+            ;;
     esac
     shift
 done
@@ -199,6 +226,7 @@ done
 [ $STEP_ALIVE2_BUILD -eq 1 -a $RETURN_VALUE -eq 0 ] && buildAlive2
 [ $STEP_ALIVE2_TEST -eq 1 -a $RETURN_VALUE -eq 0 ] && alive2TranslationValidation
 
+[ $STEP_LIST_JOBS -eq 1 -a $RETURN_VALUE -eq 0 ] && loadJobIds && printJobIds
 [ $STEP_PHORONIX -eq 1 -a $RETURN_VALUE -eq 0 ] && runPhoronix
 
 exit $RETURN_VALUE
