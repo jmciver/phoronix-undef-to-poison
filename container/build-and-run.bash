@@ -37,7 +37,7 @@ declare -a PTS_JOB_IDS=()
 declare -i PTS_JOB_ID=0
 declare -r PTS_JOBS_FILE="${PHORONIX_DIR}/categorized-profiles.txt"
 
-export DEBIAN_FRONTEND=noninteractive
+declare -x DEBIAN_FRONTEND=noninteractive
 
 function buildLLVM() {
     checkForLLVMDirectory
@@ -139,8 +139,8 @@ function runPhoronix() {
         exit 1
     fi
     archiveGitVersionAndChanges
-    export CC="${LLVM_BIN_PATH}/clang"
-    export CXX="${LLVM_BIN_PATH}/clang++"
+    declare -x CC="${LLVM_BIN_PATH}/clang"
+    declare -x CXX="${LLVM_BIN_PATH}/clang++"
     pushd $PHORONIX_DIR &> /dev/null
     ./run.sh
     RETURN_VALUE=$?
