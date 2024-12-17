@@ -125,6 +125,7 @@ Usage: $SCRIPT_NAME [OPTION]... [-- ENTRY_POINT_OPTIONS]
       --list-jobs             List jobs/tests specified in categorized-profiles.txt
 
       --llvm=PATH             Path to llvm-project, also where alive2 is located
+      --scratch=PATH          Path to temporary (fast) storage for building Phoronix tests
 
 ENTRY_POINT_OPTIONS are:
 
@@ -200,7 +201,7 @@ fi
 RESULT=$(getopt \
              --name "$SCRIPT_NAME" \
              --options "$OPT_STRING" \
-             --longoptions "help,container-type:,interactive,llvm:,list-jobs,no-cpu-checks,cpu-set,cpu-unset,cpu-info" \
+             --longoptions "help,container-type:,interactive,llvm:,scratch:,list-jobs,no-cpu-checks,cpu-set,cpu-unset,cpu-info" \
              -- "$@")
 
 if [ $? -ne 0 ]; then
@@ -221,6 +222,10 @@ while [ $# -gt 0 ]; do
         --llvm)
             shift
             LLVM_PATH=$1
+            ;;
+        --scratch)
+            shift
+            PTS_INSTALL=$1
             ;;
         --no-cpu-checks)
             CPU_CHECK_FAIL=0
