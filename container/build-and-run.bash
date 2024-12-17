@@ -14,6 +14,7 @@ declare -i STEP_LLVM_BUILD=0
 declare -i STEP_LLVM_BUILD_TARGET=0
 declare -i STEP_LLVM_TEST=0
 declare -i STEP_LIST_JOBS=0
+declare -i STEP_PHORONIX_BUILD_USING_ALIVE2=0
 declare -i STEP_PHORONIX=0
 
 declare LLVM_BUILD_TARGET_NAME="debug"
@@ -33,6 +34,7 @@ declare ALIVE2_LLVMLIT_TEST_PATH="${LLVM_PROJECT_DIR}/llvm/test"
 
 declare -r PHORONIX_DIR="/pts/phoronix/phoronix-scripts"
 declare -a PTS_JOB_IDS=()
+declare -i PTS_JOB_ID=0
 declare -r PTS_JOBS_FILE="${PHORONIX_DIR}/categorized-profiles.txt"
 
 export DEBIAN_FRONTEND=noninteractive
@@ -117,6 +119,15 @@ function printJobIds() {
     done
 }
 
+function phoronixBuildUsingAlive2() {
+    declare -x CC="/llvm/alive2/build/release/alivecc"
+    declare -x CXX="/llvm/alive2/build/release/alive++"
+    # declare -x ALIVECC_PARALLEL_FIFO=1
+    # declare -x ALIVECC_SMT_TO=0
+    # declare -x ALIVECC_SUBPROCESS_TIMEOUT=0
+    php /pts/phoronix/phoronix-test-suite/pts-core/phoronix-test-suite.php debug-install "${PTS_JOB_IDS[${PTS_JOB_ID}]}"
+}
+
 function runPhoronix() {
     if [ ! -d "$PHORONIX_DIR" ]; then
         printf 'ERROR: Phonronix scripts directory "%s\n" does not exist' "$PHORONIX_DIR"
@@ -168,12 +179,13 @@ Usage: $SCRIPT_NAME [OPTION]...
 
       --list-jobs          List jobs/tests specified in categorized-profiles.txt
   -p, --phoronix           Run Phoronix testsuite
+      --pts-alive2=ID      Build Phoronix test using ID# obtained from --list-jobs
 EOF
 }
 RESULT=$(getopt \
              --name "$SCRIPT_NAME" \
              --options "$OPT_STRING" \
-             --longoptions "help,build-alive2,build,build-target:,list-jobs,phoronix,test,test-alive2::" \
+             --longoptions "help,build-alive2,build,build-target:,list-jobs,phoronix,pts-alive2:,test,test-alive2::" \
              -- "$@")
 
 if [ $? -ne 0 ]; then
@@ -215,6 +227,11 @@ while [ $# -gt 0 ]; do
         --list-jobs)
             STEP_LIST_JOBS=1
             ;;
+        --pts-alive2)
+            STEP_PHORONIX_BUILD_USING_ALIVE2=1
+            shift
+            PTS_JOB_ID=$1
+            ;;
     esac
     shift
 done
@@ -226,7 +243,9 @@ done
 [ $STEP_ALIVE2_BUILD -eq 1 -a $RETURN_VALUE -eq 0 ] && buildAlive2
 [ $STEP_ALIVE2_TEST -eq 1 -a $RETURN_VALUE -eq 0 ] && alive2TranslationValidation
 
-[ $STEP_LIST_JOBS -eq 1 -a $RETURN_VALUE -eq 0 ] && loadJobIds && printJobIds
+loadJobIds
+[ $STEP_LIST_JOBS -eq 1 -a $RETURN_VALUE -eq 0 ] && printJobIds
+[ $STEP_PHORONIX_BUILD_USING_ALIVE2 -eq 1 -a $RETURN_VALUE -eq 0 ] && phoronixBuildUsingAlive2
 [ $STEP_PHORONIX -eq 1 -a $RETURN_VALUE -eq 0 ] && runPhoronix
 
 exit $RETURN_VALUE
