@@ -53,8 +53,8 @@ Container based building and performance benchmarking is accomplished using
 Usage: run-pts.bash [OPTION]... [-- ENTRY_POINT_OPTIONS]
   -h, --help                  Help message
 
-      --no-cpu-checks         Do not fail, just warn, on CPU goverence checks
-      --cpu-set               Set CPU governece to performance, disable trubo
+      --no-cpu-checks         Do not fail, just warn, on CPU governance checks
+      --cpu-set               Set CPU governance to performance, disable turbo
                               boost and Hyper threading for Phoronix runs
       --cpu-unset             Undo --cpu-set
 
@@ -62,18 +62,27 @@ Usage: run-pts.bash [OPTION]... [-- ENTRY_POINT_OPTIONS]
       --interactive           Start container in interactive mode,
                               ENTRY_POINT_OPTIONS have not effect
 
+      --list-jobs             List jobs/tests specified in categorized-profiles.txt
+
       --llvm=PATH             Path to llvm-project, also where alive2 is located
+      --scratch=PATH          Path to temporary (fast) storage for building Phoronix tests
 
 ENTRY_POINT_OPTIONS are:
 
 Usage: build-and-run.bash [OPTION]...
   -h, --help               Help message
+
   -b, --build              Build phase 1 and 2 of bootstrap build
       --build-target=NAME  Build specific CMakePresets.json target name
+
   -t, --test               Run check-all using phase 2
       --test-alive2=PATH   Execute alive2 TV run using llvm-lit path
+
+      --list-jobs          List jobs/tests specified in categorized-profiles.txt
   -p, --phoronix           Run Phoronix testsuite
+      --pts-alive2=ID      Build Phoronix test using ID# obtained from --list-jobs
 ```
+
 ### Advanced
 
 The container instance is designed to be single use. All data added to
