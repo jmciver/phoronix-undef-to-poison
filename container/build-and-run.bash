@@ -115,8 +115,8 @@ function loadJobIds() {
 }
 
 function printJobIds() {
-    for ((i=0; i<${#PTS_JOB_IDS[*]}; i++)); do
-        printf '%2d. %s\n' "$i" "${PTS_JOB_IDS[$i]}"
+    for index in "${!PTS_JOB_IDS[@]}"; do
+        printf '%2d. %s\n' "$index" "${PTS_JOB_IDS[index]}"
     done
 }
 

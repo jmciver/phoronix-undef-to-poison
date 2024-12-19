@@ -139,8 +139,8 @@ function listJobIds() {
     for name in $(grep -v -E '^(#|/build-)' "${SCRIPT_PATH}/phoronix-scripts/categorized-profiles.txt"); do
 	jobIds+=("$name")
     done
-    for ((i=0; i<${#jobIds[*]}; i++)); do
-        printf '%2d. %s\n' "$i" "${jobIds[$i]}"
+    for index in "${!jobIds[@]}"; do
+        printf '%2d. %s\n' "$index" "${jobIds[index]}"
     done
 }
 
