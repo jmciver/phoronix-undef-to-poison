@@ -16,6 +16,7 @@ declare -i STEP_LLVM_TEST=0
 declare -i STEP_LIST_JOBS=0
 declare -i STEP_PHORONIX_BUILD_USING_ALIVE2=0
 declare -i STEP_PHORONIX=0
+declare -i STEP_MAKE_DOWNLOAD_CACHE=0
 
 declare LLVM_BUILD_TARGET_NAME="debug"
 
@@ -127,6 +128,15 @@ function checkJobId() {
     fi
 }
 
+function phoronixMakeDownloadCache() {
+    for jobName in "${PTS_JOB_IDS[@]}"; do
+        /pts/phoronix/phoronix-test-suite/phoronix-test-suite \
+            make-download-cache \
+            "$jobName"
+        updateReturnValue "$?"
+    done
+}
+
 function phoronixBuildUsingAlive2() {
     checkJobId $PTS_JOB_ID
     declare -r jobNameBase=$(basename "${PTS_JOB_IDS[$PTS_JOB_ID]}" | tr '.' 'p')'-base'
@@ -187,6 +197,13 @@ function archiveGitVersionAndChanges() {
     popd &> /dev/null
 }
 
+function updateReturnValue() {
+    declare -i newValue=$1
+    if [[ $RETURN_VALUE -eq 0 && $newValue -ne 0 ]]; then
+        RETURN_VALUE=$newValue
+    fi
+}
+
 function helpMessage() {
     cat <<-EOF
 Usage: $SCRIPT_NAME [OPTION]...
@@ -198,15 +215,20 @@ Usage: $SCRIPT_NAME [OPTION]...
   -t, --test               Run check-all using phase 2
       --test-alive2=PATH   Execute alive2 TV run using llvm-lit path
 
-      --list-jobs          List jobs/tests specified in categorized-profiles.txt
-  -p, --phoronix           Run Phoronix testsuite
-      --pts-alive2=ID      Build Phoronix test using ID# obtained from --list-jobs
+  -p, --phoronix                Run Phoronix testsuite
+      --list-jobs               List jobs/tests specified in
+                                categorized-profiles.txt
+      --pts-alive2=ID           Build Phoronix test using ID# obtained
+                                from --list-jobs
+      --pts-make-download-cache Generate download cache for all categorized
+                                tests
 EOF
 }
+
 RESULT=$(getopt \
              --name "$SCRIPT_NAME" \
              --options "$OPT_STRING" \
-             --longoptions "help,build-alive2,build,build-target:,list-jobs,phoronix,pts-alive2:,test,test-alive2::" \
+             --longoptions "help,build-alive2,build,build-target:,list-jobs,phoronix,pts-alive2:,pts-make-download-cache,test,test-alive2::" \
              -- "$@")
 
 if [ $? -ne 0 ]; then
@@ -253,6 +275,9 @@ while [ $# -gt 0 ]; do
             shift
             PTS_JOB_ID=$1
             ;;
+        --pts-make-download-cache)
+            STEP_MAKE_DOWNLOAD_CACHE=1
+            ;;
     esac
     shift
 done
@@ -266,6 +291,7 @@ done
 
 loadJobIds
 [ $STEP_LIST_JOBS -eq 1 -a $RETURN_VALUE -eq 0 ] && printJobIds
+[ $STEP_MAKE_DOWNLOAD_CACHE -eq 1 -a $RETURN_VALUE -eq 0 ] && phoronixMakeDownloadCache
 [ $STEP_PHORONIX_BUILD_USING_ALIVE2 -eq 1 -a $RETURN_VALUE -eq 0 ] && phoronixBuildUsingAlive2
 [ $STEP_PHORONIX -eq 1 -a $RETURN_VALUE -eq 0 ] && runPhoronix
 

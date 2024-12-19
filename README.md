@@ -78,9 +78,13 @@ Usage: build-and-run.bash [OPTION]...
   -t, --test               Run check-all using phase 2
       --test-alive2=PATH   Execute alive2 TV run using llvm-lit path
 
-      --list-jobs          List jobs/tests specified in categorized-profiles.txt
-  -p, --phoronix           Run Phoronix testsuite
-      --pts-alive2=ID      Build Phoronix test using ID# obtained from --list-jobs
+  -p, --phoronix                Run Phoronix testsuite
+      --list-jobs               List jobs/tests specified in
+                                categorized-profiles.txt
+      --pts-alive2=ID           Build Phoronix test using ID# obtained
+                                from --list-jobs
+      --pts-make-download-cache Generate download cache for all categorized
+                                tests
 ```
 
 ### Advanced
