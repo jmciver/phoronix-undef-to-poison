@@ -128,13 +128,25 @@ function checkJobId() {
 }
 
 function phoronixBuildUsingAlive2() {
+    checkJobId $PTS_JOB_ID
+    declare -r jobNameBase=$(basename "${PTS_JOB_IDS[$PTS_JOB_ID]}" | tr '.' 'p')'-base'
+
+    # The following environment variables are used by Phoronix. The result name
+    # is also the name of the directory where the results reside.
+    # declare -x TEST_RESULTS_NAME="$jobNameBase"
+    # declare -x TEST_RESULTS_IDENTIFIER="container"
+
+    # Use unique random file IDs to prevent naming collisions due to different
+    # translational objects in a project's hierarchy using the same name. Alive2
+    # results are placed in the test-results directory to maintain a separation
+    # between build and report artifacts.
+    declare -x ALIVECC_OVERWRITE_REPORTS=0
+    declare -x ALIVECC_REPORT_DIR="/pts/pts-install/test-results/${jobNameBase}/alive2-logs"
+
     declare -x CC="/llvm/alive2/build/release/alivecc"
     declare -x CXX="/llvm/alive2/build/release/alive++"
-    # declare -x ALIVECC_PARALLEL_FIFO=1
-    # declare -x ALIVECC_SMT_TO=0
-    # declare -x ALIVECC_SUBPROCESS_TIMEOUT=0
-    checkJobId $PTS_JOB_ID
     php /pts/phoronix/phoronix-test-suite/pts-core/phoronix-test-suite.php debug-install "${PTS_JOB_IDS[${PTS_JOB_ID}]}"
+    # php /pts/phoronix/phoronix-test-suite/pts-core/phoronix-test-suite.php batch-run "${PTS_JOB_IDS[${PTS_JOB_ID}]}"
 }
 
 function runPhoronix() {
