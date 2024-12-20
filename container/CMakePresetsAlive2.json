@@ -13,8 +13,8 @@
             "generator": "Ninja",
             "cacheVariables": {
                 "CMAKE_PREFIX_PATH": "/llvm/build/release1",
-                "Z3_INCLUDE_DIR": "/usr/include",
-                "Z3_LIBRARIES": "/usr/lib/x86_64-linux-gnu/libz3.so.4",
+                "Z3_INCLUDE_DIR": "/llvm/z3/install/release/include",
+                "Z3_LIBRARIES": "/llvm/z3/install/release/lib/libz3.so",
                 "BUILD_TV": "1"
             }
         },

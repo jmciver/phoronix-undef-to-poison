@@ -1,0 +1,38 @@
+{
+    "version": 6,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 23,
+        "patch": 0
+    },
+    "configurePresets": [
+        {
+            "name": "default",
+            "displayName": "Default Config",
+            "description": "Common build configuration for Z3",
+            "generator": "Ninja",
+            "cacheVariables": {
+                "CMAKE_CXX_COMPILER": "clang++"
+            }
+        },
+        {
+            "name": "release",
+            "inherits": "default",
+            "displayName": "Ninja Release",
+            "description": "Build release using Ninja",
+            "binaryDir": "build/release",
+            "installDir": "install/release",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "release",
+            "displayName": "Ninja Release",
+            "configurePreset": "release",
+            "targets": ["install"]
+        }
+    ]
+}
