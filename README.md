@@ -72,8 +72,9 @@ ENTRY_POINT_OPTIONS are:
 Usage: build-and-run.bash [OPTION]...
   -h, --help               Help message
 
-  -b, --build              Build phase 1 and 2 of bootstrap build
+  -b, --build              Build phase 1 and 2 of LLVM bootstrap build
       --build-target=NAME  Build specific CMakePresets.json target name
+      --build-alive2       Build Alive2
 
   -t, --test               Run check-all using phase 2
       --test-alive2=PATH   Execute alive2 TV run using llvm-lit path
