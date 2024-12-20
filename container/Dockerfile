@@ -60,7 +60,6 @@ RUN apt-get update && \
     vulkan-tools \
     xorg-dev \
     yasm \
-    z3 \
     zlib1g-dev && \
   apt-get clean autoclean && \
   rm -rf /var/lib/apt/lists/* && \
