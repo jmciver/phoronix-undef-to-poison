@@ -6,7 +6,8 @@
       <AnonymousUsageReporting>TRUE</AnonymousUsageReporting>
       <IndexCacheTTL>3</IndexCacheTTL>
       <AlwaysUploadSystemLogs>FALSE</AlwaysUploadSystemLogs>
-      <AllowResultUploadsToOpenBenchmarking>TRUE</AllowResultUploadsToOpenBenchmarking>
+      <AllowResultUploadsToOpenBenchmarking>FALSE</AllowResultUploadsToOpenBenchmarking>
+      <AutoRefreshCache>FALSE</AutoRefreshCache>
     </OpenBenchmarking>
     <General>
       <DefaultBrowser></DefaultBrowser>
@@ -24,7 +25,7 @@
       <SymLinkFilesFromCache>FALSE</SymLinkFilesFromCache>
       <PromptForDownloadMirror>FALSE</PromptForDownloadMirror>
       <EnvironmentDirectory>$HOME/pts-install/installed-tests</EnvironmentDirectory>
-      <CacheDirectory>$HOME/pts-install/download-cache</CacheDirectory>
+      <CacheDirectory>~/.phoronix-test-suite/download-cache/</CacheDirectory>
     </Installation>
     <Testing>
       <SaveSystemLogs>TRUE</SaveSystemLogs>
