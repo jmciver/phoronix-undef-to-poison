@@ -3,14 +3,15 @@ From: ubuntu:{{ VERSION }}
 
 %arguments
   VERSION=24.04
-  USER_HOME=jmciver
+  USER_HOME=pts
+  PTS_WORK_DIR=/pts
 
 %files
   user-config.xml /home/{{ USER_HOME }}/.phoronix-test-suite/
   local-phoronix-run-config.bash /home/{{ USER_HOME }}
-  CMakePresetsLLVM.json /home/{{ USER_HOME}}
-  CMakePresetsAlive2.json /home/{{ USER_HOME}}
-  build-and-run.bash /home/{{ USER_HOME}}
+  CMakePresetsLLVM.json /home/{{ USER_HOME }}
+  CMakePresetsAlive2.json /home/{{ USER_HOME }}
+  build-and-run.bash /home/{{ USER_HOME }}
 
 %post
   apt-get update && \
@@ -66,7 +67,11 @@ From: ubuntu:{{ VERSION }}
     rm -rf /var/lib/apt/lists/* && \
     localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8 && \
     setcap 'cap_sys_nice=eip' /usr/bin/nice && \
-    rm $(readlink -f /usr/bin/g++) && rm $(readlink -f /usr/bin/gcc) && rm /usr/bin/g++ && rm /usr/bin/gcc
+    rm $(readlink -f /usr/bin/g++) && rm $(readlink -f /usr/bin/gcc) && rm /usr/bin/g++ && rm /usr/bin/gcc && \
+    ln -s /pts/phoronix/test-profiles /home/{{ USER_HOME }}/.phoronix-test-suite/test-profiles && \
+    ln -s /pts/phoronix/download-cache /home/{{ USER_HOME }}/.phoronix-test-suite/download-cache && \
+    sed -i -E 's,\$HOME,'{{ PTS_WORK_DIR }}',g' /home/{{ USER_HOME }}/.phoronix-test-suite/user-config.xml && \
+    sed -i -E 's,\$HOME,'{{ PTS_WORK_DIR }}',g' /home/{{ USER_HOME }}/local-phoronix-run-config.bash
 
 %environment
   export LANG=en_US.utf8

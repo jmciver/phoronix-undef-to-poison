@@ -93,7 +93,9 @@ COPY --chown=$USER:$USER build-and-run.bash .
 RUN sed -i -E 's,\$HOME,'${PTS_WORK_DIR}',g' .phoronix-test-suite/user-config.xml && \
     sed -i -E 's,\$HOME,'${PTS_WORK_DIR}',g' local-phoronix-run-config.bash && \
     ln -s /pts/phoronix/test-profiles .phoronix-test-suite/test-profiles && \
-    chown -h ${USER_UID}:${USER_GID} .phoronix-test-suite/test-profiles
+    chown -h ${USER_UID}:${USER_GID} .phoronix-test-suite/test-profiles && \
+    ln -s /pts/phoronix/download-cache .phoronix-test-suite/download-cache && \
+    chown -h ${USER_UID}:${USER_GID} .phoronix-test-suite/download-cache
 
 USER ${USER}
 ENTRYPOINT ["./build-and-run.bash"]

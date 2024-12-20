@@ -108,6 +108,11 @@ function checkContainerType() {
     return 1
 }
 
+function createDownloadCacheDirectory() {
+    declare -r downloadCachePath="${SCRIPT_PATH}/download_cache"
+    [[ ! -d "$downloadCachePath" ]] && mkdir "$downloadCachePath"
+}
+
 function helpMessage () {
     cat <<-EOF
 Usage: $SCRIPT_NAME [OPTION]... [-- ENTRY_POINT_OPTIONS]
@@ -272,6 +277,7 @@ if [ ! -d "$LLVM_PATH" ]; then
     exit 1
 fi
 
+createDownloadCacheDirectory
 case "$CONTAINER_TYPE" in
     docker)
         runDocker "$@"
