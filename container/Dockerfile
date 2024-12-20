@@ -88,6 +88,7 @@ COPY --chown=$USER:$USER user-config.xml .phoronix-test-suite/
 COPY --chown=$USER:$USER local-phoronix-run-config.bash .
 COPY --chown=$USER:$USER CMakePresetsLLVM.json .
 COPY --chown=$USER:$USER CMakePresetsAlive2.json .
+COPY --chown=$USER:$USER CMakePresetsZ3.json .
 COPY --chown=$USER:$USER build-and-run.bash .
 RUN sed -i -E 's,\$HOME,'${PTS_WORK_DIR}',g' .phoronix-test-suite/user-config.xml && \
     sed -i -E 's,\$HOME,'${PTS_WORK_DIR}',g' local-phoronix-run-config.bash && \

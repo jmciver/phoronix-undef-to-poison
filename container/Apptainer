@@ -11,6 +11,7 @@ From: ubuntu:{{ VERSION }}
   local-phoronix-run-config.bash /home/{{ USER_HOME }}
   CMakePresetsLLVM.json /home/{{ USER_HOME }}
   CMakePresetsAlive2.json /home/{{ USER_HOME }}
+  CMakePresetsZ3.json /home/{{ USER_HOME }}
   build-and-run.bash /home/{{ USER_HOME }}
 
 %post

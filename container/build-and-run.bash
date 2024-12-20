@@ -33,6 +33,8 @@ declare -r ALIVE2_DIR="/llvm/alive2"
 declare -r ALIVE2_BUILD_DIR="${ALIVE2_DIR}/build/release"
 declare ALIVE2_LLVMLIT_TEST_PATH="${LLVM_PROJECT_DIR}/llvm/test"
 
+declare -r Z3_DIR="/llvm/z3"
+
 declare -r PHORONIX_DIR="/pts/phoronix/phoronix-scripts"
 declare -a PTS_JOB_IDS=()
 declare -i PTS_JOB_ID=0
@@ -75,10 +77,20 @@ function testLLVM() {
 function buildAlive2() {
     checkForBuildDirectory "LLVM" "$LLVM_RELEASE1"
     pushd "$ALIVE2_DIR" &> /dev/null
-    copyAlive2CMakePresetsJSON
+    copyCMakePresets "CMakePresetsAlive2.json"
     cmake --preset release && cmake --build --preset release
     RETURN_VALUE=$?
     popd &> /dev/null
+    return $RETURN_VALUE
+}
+
+function buildZ3() {
+    pushd "$Z3_DIR" &> /dev/null
+    copyCMakePresets "CMakePresetsZ3.json"
+    cmake --preset release && cmake --build --preset release
+    RETURN_VALUE=$?
+    popd &> /dev/null
+    return $RETURN_VALUE
 }
 
 function alive2TranslationValidation() {
@@ -184,9 +196,11 @@ function copyLLVMCMakePresetsJSON() {
     [ ! -f CMakePresets.json ] && cp "${SCRIPT_PATH}/CMakePresetsLLVM.json" CMakePresets.json
 }
 
-function copyAlive2CMakePresetsJSON() {
-    [ ! -f CMakePresets.json ] && cp "${SCRIPT_PATH}/CMakePresetsAlive2.json" CMakePresets.json
+function copyCMakePresets() {
+    declare sourceName=$1
+    [ ! -f CMakePresets.json ] && cp "${SCRIPT_PATH}/${sourceName}" CMakePresets.json
 }
+
 
 function archiveGitVersionAndChanges() {
     if [ ! -d  "$PTS_INSTALL_DIR" ]; then
@@ -211,8 +225,9 @@ function helpMessage() {
 Usage: $SCRIPT_NAME [OPTION]...
   -h, --help               Help message
 
-  -b, --build              Build phase 1 and 2 of bootstrap build
+  -b, --build              Build phase 1 and 2 of LLVM bootstrap build
       --build-target=NAME  Build specific CMakePresets.json target name
+      --build-alive2       Build Alive2
 
   -t, --test               Run check-all using phase 2
       --test-alive2=PATH   Execute alive2 TV run using llvm-lit path
@@ -288,7 +303,7 @@ done
 [ $STEP_LLVM_BUILD_TARGET -eq 1 -a $RETURN_VALUE -eq 0 ] && buildTargetByNameLLVM
 [ $STEP_LLVM_TEST -eq 1 -a $RETURN_VALUE -eq 0 ] && testLLVM
 
-[ $STEP_ALIVE2_BUILD -eq 1 -a $RETURN_VALUE -eq 0 ] && buildAlive2
+[ $STEP_ALIVE2_BUILD -eq 1 -a $RETURN_VALUE -eq 0 ] && buildZ3 && buildAlive2
 [ $STEP_ALIVE2_TEST -eq 1 -a $RETURN_VALUE -eq 0 ] && alive2TranslationValidation
 
 loadJobIds
