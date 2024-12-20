@@ -109,7 +109,7 @@ function checkContainerType() {
 }
 
 function createDownloadCacheDirectory() {
-    declare -r downloadCachePath="${SCRIPT_PATH}/download_cache"
+    declare -r downloadCachePath="${SCRIPT_PATH}/download-cache"
     [[ ! -d "$downloadCachePath" ]] && mkdir "$downloadCachePath"
 }
 
