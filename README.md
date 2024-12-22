@@ -59,6 +59,7 @@ Usage: run-pts.bash [OPTION]... [-- ENTRY_POINT_OPTIONS]
       --cpu-unset             Undo --cpu-set
 
       --container-type=TYPE   The type can be docker or apptainer
+      --tag                   Container tag/version
       --interactive           Start container in interactive mode,
                               ENTRY_POINT_OPTIONS have not effect
 

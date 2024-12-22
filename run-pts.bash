@@ -8,7 +8,7 @@ declare -r SCRIPT_PATH=${0%/*}
 declare -r OPT_STRING="-h"
 
 declare -r PTS_INSTALL="/tmp/pts-install"
-
+2
 declare -r CPU_TURBO_BOOST="/sys/devices/system/cpu/intel_pstate/no_turbo"
 declare -r CPU_HYPER_THREAD="/sys/devices/system/cpu/smt/control"
 
@@ -16,6 +16,8 @@ declare -i CPU_CHECK_FAIL=1
 
 declare -i INTERACTIVE=0
 
+declare -r CONTAINER_BASENAME="pts-test"
+declare -i CONTAINER_TAG=1
 declare -ar CONTAINERS=("docker", "apptainer")
 declare CONTAINER_TYPE="docker"
 
@@ -124,6 +126,7 @@ Usage: $SCRIPT_NAME [OPTION]... [-- ENTRY_POINT_OPTIONS]
       --cpu-unset             Undo --cpu-set
 
       --container-type=TYPE   The type can be docker or apptainer
+      --tag                   Container tag/version
       --interactive           Start container in interactive mode,
                               ENTRY_POINT_OPTIONS have not effect
 
@@ -150,6 +153,7 @@ function listJobIds() {
 }
 
 function runDocker() {
+    declare -r imageName="${CONTAINER_BASENAME}:${CONTAINER_TAG}"
     if [ $INTERACTIVE -eq 1 ]; then
         docker \
             run \
@@ -161,7 +165,7 @@ function runDocker() {
             --mount type=bind,source="$PTS_INSTALL",target="/pts/pts-install" \
             --mount type=bind,source="$LLVM_PATH",target="/llvm" \
             --entrypoint=/usr/bin/bash \
-            pts-test:1
+            "$imageName"
     else
         docker \
             run \
@@ -172,11 +176,12 @@ function runDocker() {
             --mount type=bind,source="$(pwd)",target="/pts/phoronix" \
             --mount type=bind,source="$PTS_INSTALL",target="/pts/pts-install" \
             --mount type=bind,source="$LLVM_PATH",target="/llvm" \
-            pts-test:1 "$@"
+            "$imageName" "$@"
     fi
 }
 
 function runApptainer() {
+    declare -r imageName="${SCRIPT_PATH}/container/${CONTAINER_BASENAME}-${CONTAINER_TAG}.sif"
     if [ $INTERACTIVE -eq 1 ]; then
         apptainer \
             shell \
@@ -185,7 +190,7 @@ function runApptainer() {
             --mount type=bind,source="$(pwd)",target="/pts/phoronix" \
             --mount type=bind,source="$PTS_INSTALL",target="/pts/pts-install" \
             --mount type=bind,source="$LLVM_PATH",target="/llvm" \
-            "${SCRIPT_PATH}/container/pts-test.sif"
+            "$imageName"
     else
         apptainer \
             run \
@@ -194,7 +199,7 @@ function runApptainer() {
             --mount type=bind,source="$(pwd)",target="/pts/phoronix" \
             --mount type=bind,source="$PTS_INSTALL",target="/pts/pts-install" \
             --mount type=bind,source="$LLVM_PATH",target="/llvm" \
-            "${SCRIPT_PATH}/container/pts-test.sif" "$@"
+            "$$imageName" "$@"
     fi
 }
 
@@ -206,12 +211,9 @@ fi
 RESULT=$(getopt \
              --name "$SCRIPT_NAME" \
              --options "$OPT_STRING" \
-             --longoptions "help,container-type:,interactive,llvm:,scratch:,list-jobs,no-cpu-checks,cpu-set,cpu-unset,cpu-info" \
+             --longoptions "help,container-type:,tag:,interactive,llvm:,scratch:,list-jobs,no-cpu-checks,cpu-set,cpu-unset,cpu-info" \
              -- "$@")
-
-if [ $? -ne 0 ]; then
-    exit 1
-fi
+[[ $? -eq 0 ]] || exit 1
 
 eval set -- "$RESULT"
 
@@ -252,6 +254,10 @@ while [ $# -gt 0 ]; do
             shift
             CONTAINER_TYPE=$1
             checkContainerType || exit 1
+            ;;
+        --tag)
+            shift
+            CONTAINER_TAG=$1
             ;;
         --list-jobs)
             listJobIds
