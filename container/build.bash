@@ -12,7 +12,6 @@ declare -i BUILD_APPTAINER=0
 
 declare -r USER_UID=$(id -u)
 declare -r USER_GID=$(id -g)
-declare -r USER_NAME=$(id -u -n)
 
 declare -r CONTAINER_BASENAME="pts-test"
 declare -i CONTAINER_VERSION=1
