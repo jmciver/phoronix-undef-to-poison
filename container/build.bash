@@ -14,37 +14,53 @@ declare -r USER_UID=$(id -u)
 declare -r USER_GID=$(id -g)
 declare -r USER_NAME=$(id -u -n)
 
-declare -r APPTAINER_SIF_NAME="pts-test.sif"
+declare -r CONTAINER_BASENAME="pts-test"
+declare -i CONTAINER_VERSION=1
 
 function buildDocker() {
+    declare -r imageName="${CONTAINER_BASENAME}:${CONTAINER_VERSION}"
+    cleanupDocker "$imageName"
     docker \
         build \
         --build-arg="USER_UID=${USER_UID}" \
         --build-arg="USER_GID=${USER_GID}" \
-        --tag=pts-test:1 .
+        --tag="$imageName" .
+}
+
+function cleanupDocker() {
+    declare -r imageName=$1
+    if [[ $(docker ps -qa --filter "ancestor=${imageName}" | wc -l) -gt 0 ]]; then
+        printf 'ERROR: image "%s" is currently used by a container\n' "$imageName"
+        exit 1
+    else
+        docker image inspect "$imageName" &> /dev/null && \
+            docker image rm "$imageName"
+    fi
 }
 
 function buildApptainer() {
-    rm -rf "$APPTAINER_SIF_NAME" && \
-        apptainer \
-            build \
-            --build-arg "USER_HOME=ptr" \
-            "$APPTAINER_SIF_NAME" \
-            Apptainer
+    declare -r sifFilename="${CONTAINER_BASENAME}-${CONTAINER_VERSION}.sif"
+    [[ -f "$sifFilename" ]] && rm "$sifFilename"
+    apptainer \
+        build \
+        --build-arg "USER_HOME=ptr" \
+        "$sifFilename" \
+        Apptainer
 }
 
 RESULT=$(getopt \
              --name "$SCRIPT_NAME" \
              --options "$OPT_STRING" \
-             --longoptions "help,docker,apptainer" \
+             --longoptions "help,docker,apptainer,tag:" \
              -- "$@")
+[[ $? -eq 0 ]] || exit 1
 
 eval set -- "$RESULT"
 
 while [ $# -gt 0 ]; do
     case "$1" in
         -h | --help)
-            printf "%s\n" "usage: $SCRIPT_NAME [-h|--help] [--docker] [--apptainer]"
+            printf "%s\n" "usage: $SCRIPT_NAME [-h|--help] [--docker] [--apptainer] [--tag=NUMBER]"
             exit 0
             ;;
         --docker)
@@ -52,6 +68,10 @@ while [ $# -gt 0 ]; do
             ;;
         --apptainer)
             BUILD_APPTAINER=1
+            ;;
+        --tag)
+            shift
+            CONTAINER_VERSION=$1
             ;;
     esac
     shift
