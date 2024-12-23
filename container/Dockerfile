@@ -1,8 +1,6 @@
 FROM ubuntu:24.04
 
-ARG USER=ptr
-ARG USER_UID=1000
-ARG USER_GID=${USER_UID}
+ARG USER=ubuntu
 
 ARG PTS_WORK_DIR=/pts
 
@@ -71,17 +69,7 @@ ENV LANG=en_US.utf8
 # Disable gcc and g++ from being accessible to the runtime user.
 RUN chmod 700 $(readlink -f /usr/bin/g++) && chmod 700 $(readlink -f /usr/bin/gcc)
 
-RUN if [ ${USER_UID} -eq 1000 ]; then userdel -r ubuntu; fi && \
-  groupadd -g ${USER_GID} -r ${USER} && \
-  useradd -m -u ${USER_UID} -r -g ${USER} -G sudo ${USER} && \
-  usermod -p 'R0Vc6SemMBgmQ' ${USER} && \
-  printf '#<domain>    <type>  <item>  <value>\n%-12s %-7s %-7s %s\n' \
-    "${USER}" \
-    "-" \
-    "nice" \
-    "-20" > /etc/security/limits.d/${USER}-nice-maximum.conf && \
-  mkdir ${PTS_WORK_DIR} && \
-  chown $USER:$USER ${PTS_WORK_DIR}
+RUN mkdir ${PTS_WORK_DIR} && chown $USER:$USER ${PTS_WORK_DIR}
 
 WORKDIR /home/$USER
 COPY --chown=$USER:$USER user-config.xml .phoronix-test-suite/

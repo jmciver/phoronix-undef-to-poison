@@ -153,6 +153,8 @@ function listJobIds() {
 }
 
 function runDocker() {
+    declare userUID=$(id -u)
+    declare userGID=$(id -g)
     declare -r imageName="${CONTAINER_BASENAME}:${CONTAINER_TAG}"
     if [ $INTERACTIVE -eq 1 ]; then
         docker \
@@ -164,6 +166,7 @@ function runDocker() {
             --mount type=bind,source="$(pwd)",target="/pts/phoronix" \
             --mount type=bind,source="$PTS_INSTALL",target="/pts/pts-install" \
             --mount type=bind,source="$LLVM_PATH",target="/llvm" \
+            --user "${userUID}:${userGID}" \
             --entrypoint=/usr/bin/bash \
             "$imageName"
     else
@@ -176,6 +179,7 @@ function runDocker() {
             --mount type=bind,source="$(pwd)",target="/pts/phoronix" \
             --mount type=bind,source="$PTS_INSTALL",target="/pts/pts-install" \
             --mount type=bind,source="$LLVM_PATH",target="/llvm" \
+            --user "${userUID}:${userGID}" \
             "$imageName" "$@"
     fi
 }
