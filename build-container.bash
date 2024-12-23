@@ -76,5 +76,7 @@ while [ $# -gt 0 ]; do
     shift
 done
 
+pushd "${SCRIPT_PATH}/container" &> /dev/null
 [ $BUILD_DOCKER -eq 1 ] && buildDocker
 [ $BUILD_APPTAINER -eq 1 ] && buildApptainer
+popd &> /dev/null
