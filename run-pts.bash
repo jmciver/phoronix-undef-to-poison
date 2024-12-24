@@ -20,7 +20,7 @@ declare -i INTERACTIVE=0
 
 declare -r CONTAINER_BASENAME="pts-test"
 declare -i CONTAINER_TAG=1
-declare -ar CONTAINERS=("docker", "apptainer")
+declare -ar CONTAINERS=("docker" "apptainer")
 declare CONTAINER_TYPE="docker"
 
 declare LLVM_PATH=""
