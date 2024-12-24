@@ -7,8 +7,10 @@ declare -r SCRIPT_PATH=${0%/*}
 
 declare -r OPT_STRING="-h"
 
-declare -r PTS_INSTALL="/tmp/pts-install"
-2
+declare PTS_PATH="/tmp"
+declare -r PTS_HOME="pts-home"
+declare -r PTS_INSTALL="pts-install"
+
 declare -r CPU_TURBO_BOOST="/sys/devices/system/cpu/intel_pstate/no_turbo"
 declare -r CPU_HYPER_THREAD="/sys/devices/system/cpu/smt/control"
 
@@ -156,6 +158,8 @@ function runDocker() {
     declare userUID=$(id -u)
     declare userGID=$(id -g)
     declare -r imageName="${CONTAINER_BASENAME}:${CONTAINER_TAG}"
+    declare -r ptsInstallPath="${PTS_PATH}/${PTS_INSTALL}"
+    declare -r ptsHomePath="${PTS_PATH}/${PTS_HOME}"
     if [ $INTERACTIVE -eq 1 ]; then
         docker \
             run \
@@ -164,7 +168,8 @@ function runDocker() {
             --cap-add SYS_NICE \
             --ulimit core=0 \
             --mount type=bind,source="$(pwd)",target="/pts/phoronix" \
-            --mount type=bind,source="$PTS_INSTALL",target="/pts/pts-install" \
+            --mount type=bind,source="$ptsInstallPath",target="/pts/pts-install" \
+            --mount type=bind,source="$ptsHomePath",target="/pts/pts-home" \
             --mount type=bind,source="$LLVM_PATH",target="/llvm" \
             --user "${userUID}:${userGID}" \
             --entrypoint=/usr/bin/bash \
@@ -177,7 +182,8 @@ function runDocker() {
             --cap-add SYS_NICE \
             --ulimit core=0 \
             --mount type=bind,source="$(pwd)",target="/pts/phoronix" \
-            --mount type=bind,source="$PTS_INSTALL",target="/pts/pts-install" \
+            --mount type=bind,source="$ptsInstallPath",target="/pts/pts-install" \
+            --mount type=bind,source="$ptsHomePath",target="/pts/pts-home" \
             --mount type=bind,source="$LLVM_PATH",target="/llvm" \
             --user "${userUID}:${userGID}" \
             "$imageName" "$@"
@@ -186,13 +192,16 @@ function runDocker() {
 
 function runApptainer() {
     declare -r imageName="${SCRIPT_PATH}/container/${CONTAINER_BASENAME}-${CONTAINER_TAG}.sif"
+    declare -r ptsInstallPath="${PTS_PATH}/${PTS_INSTALL}"
+    declare -r ptsHomePath="${PTS_PATH}/${PTS_HOME}"
     if [ $INTERACTIVE -eq 1 ]; then
         apptainer \
             shell \
             --no-home \
             --containall \
             --mount type=bind,source="$(pwd)",target="/pts/phoronix" \
-            --mount type=bind,source="$PTS_INSTALL",target="/pts/pts-install" \
+            --mount type=bind,source="$ptsInstallPath",target="/pts/pts-install" \
+            --mount type=bind,source="$ptsHomePath",target="/pts/pts-home" \
             --mount type=bind,source="$LLVM_PATH",target="/llvm" \
             "$imageName"
     else
@@ -201,16 +210,22 @@ function runApptainer() {
             --no-home \
             --containall \
             --mount type=bind,source="$(pwd)",target="/pts/phoronix" \
-            --mount type=bind,source="$PTS_INSTALL",target="/pts/pts-install" \
+            --mount type=bind,source="$ptsInstallPath",target="/pts/pts-install" \
+            --mount type=bind,source="$ptsHomePath",target="/pts/pts-home" \
             --mount type=bind,source="$LLVM_PATH",target="/llvm" \
-            "$$imageName" "$@"
+            "$imageName" "$@"
     fi
 }
 
-if [ ! -d "$PTS_INSTALL" ]; then
-    printf "INFO: making pts install/build directory %s\n" "$PTS_INSTALL"
-    mkdir -p "$PTS_INSTALL" || exit 1
-fi
+function createPtsInstallPath() {
+    if [ ! -d "$PTS_PATH" ]; then
+        printf "INFO: making pts home and install/build directory in %s\n" "$PTS_PATH"
+        mkdir -p "$PTS_PATH" && \
+            mkdir -p "${PTS_PATH}/${PTS_INSTALL}" && \
+            mkdir -p "${PTS_PATH}/${PTS_HOME}" || \
+                exit 1
+    fi
+}
 
 RESULT=$(getopt \
              --name "$SCRIPT_NAME" \
@@ -236,7 +251,7 @@ while [ $# -gt 0 ]; do
             ;;
         --scratch)
             shift
-            PTS_INSTALL=$1
+            PTS_PATH=$1
             ;;
         --no-cpu-checks)
             CPU_CHECK_FAIL=0
@@ -275,6 +290,7 @@ while [ $# -gt 0 ]; do
     shift
 done
 
+createPtsInstallPath
 checkCpuSettings
 
 if [ -z "$LLVM_PATH" ]; then
