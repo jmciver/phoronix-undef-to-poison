@@ -25,7 +25,7 @@
       <SymLinkFilesFromCache>FALSE</SymLinkFilesFromCache>
       <PromptForDownloadMirror>FALSE</PromptForDownloadMirror>
       <EnvironmentDirectory>$HOME/pts-install/installed-tests</EnvironmentDirectory>
-      <CacheDirectory>~/.phoronix-test-suite/download-cache/</CacheDirectory>
+      <CacheDirectory>/pts/phoronix/download-cache/</CacheDirectory>
     </Installation>
     <Testing>
       <SaveSystemLogs>TRUE</SaveSystemLogs>

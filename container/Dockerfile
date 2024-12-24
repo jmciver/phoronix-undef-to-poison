@@ -3,6 +3,8 @@ FROM ubuntu:24.04
 ARG USER=ubuntu
 
 ARG PTS_WORK_DIR=/pts
+# The trailing slash is necessary.
+ARG PTS_USER_PATH_OVERRIDE=/pts/pts-home/
 
 # NOTE 1: the setcap operator flag options "eip" stand for effective,
 # inheritable and permitted. When the container is run with capability (cap_add)
@@ -65,6 +67,7 @@ RUN apt-get update && \
   setcap 'cap_sys_nice=eip' /usr/bin/nice
 
 ENV LANG=en_US.utf8
+ENV PTS_USER_PATH_OVERRIDE=$PTS_USER_PATH_OVERRIDE
 
 # Disable gcc and g++ from being accessible to the runtime user.
 RUN chmod 700 $(readlink -f /usr/bin/g++) && chmod 700 $(readlink -f /usr/bin/gcc)
@@ -72,18 +75,14 @@ RUN chmod 700 $(readlink -f /usr/bin/g++) && chmod 700 $(readlink -f /usr/bin/gc
 RUN mkdir ${PTS_WORK_DIR} && chown $USER:$USER ${PTS_WORK_DIR}
 
 WORKDIR /home/$USER
-COPY --chown=$USER:$USER user-config.xml .phoronix-test-suite/
+COPY --chown=$USER:$USER user-config.xml .
 COPY --chown=$USER:$USER local-phoronix-run-config.bash .
 COPY --chown=$USER:$USER CMakePresetsLLVM.json .
 COPY --chown=$USER:$USER CMakePresetsAlive2.json .
 COPY --chown=$USER:$USER CMakePresetsZ3.json .
 COPY --chown=$USER:$USER build-and-run.bash .
-RUN sed -i -E 's,\$HOME,'${PTS_WORK_DIR}',g' .phoronix-test-suite/user-config.xml && \
-    sed -i -E 's,\$HOME,'${PTS_WORK_DIR}',g' local-phoronix-run-config.bash && \
-    ln -s /pts/phoronix/test-profiles .phoronix-test-suite/test-profiles && \
-    chown -h ${USER_UID}:${USER_GID} .phoronix-test-suite/test-profiles && \
-    ln -s /pts/phoronix/download-cache .phoronix-test-suite/download-cache && \
-    chown -h ${USER_UID}:${USER_GID} .phoronix-test-suite/download-cache
+RUN sed -i -E 's,\$HOME,'${PTS_WORK_DIR}',g' user-config.xml && \
+    sed -i -E 's,\$HOME,'${PTS_WORK_DIR}',g' local-phoronix-run-config.bash
 
 USER ${USER}
 ENTRYPOINT ["./build-and-run.bash"]

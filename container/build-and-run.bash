@@ -140,6 +140,12 @@ function checkJobId() {
     fi
 }
 
+function setupPtsHome() {
+    declare userConfig="${PTS_USER_PATH_OVERRIDE}/user-config.xml"
+    declare downloadCacheDir="${PTS_USER_PATH_OVERRIDE}/download-cache"
+    [[ -f "$userConfig" ]] || cp "${HOME}/user-config.xml" "$userConfig"
+}
+
 function phoronixMakeDownloadCache() {
     for jobName in "${PTS_JOB_IDS[@]}"; do
         /pts/phoronix/phoronix-test-suite/phoronix-test-suite \
@@ -307,6 +313,7 @@ done
 [ $STEP_ALIVE2_TEST -eq 1 -a $RETURN_VALUE -eq 0 ] && alive2TranslationValidation
 
 loadJobIds
+setupPtsHome
 [ $STEP_LIST_JOBS -eq 1 -a $RETURN_VALUE -eq 0 ] && printJobIds
 [ $STEP_MAKE_DOWNLOAD_CACHE -eq 1 -a $RETURN_VALUE -eq 0 ] && phoronixMakeDownloadCache
 [ $STEP_PHORONIX_BUILD_USING_ALIVE2 -eq 1 -a $RETURN_VALUE -eq 0 ] && phoronixBuildUsingAlive2
