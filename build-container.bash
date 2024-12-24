@@ -21,8 +21,6 @@ function buildDocker() {
     cleanupDocker "$imageName"
     docker \
         build \
-        --build-arg="USER_UID=${USER_UID}" \
-        --build-arg="USER_GID=${USER_GID}" \
         --tag="$imageName" .
 }
 
