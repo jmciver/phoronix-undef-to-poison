@@ -142,7 +142,6 @@ function checkJobId() {
 
 function setupPtsHome() {
     declare userConfig="${PTS_USER_PATH_OVERRIDE}/user-config.xml"
-    declare downloadCacheDir="${PTS_USER_PATH_OVERRIDE}/download-cache"
     [[ -f "$userConfig" ]] || cp "${HOME}/user-config.xml" "$userConfig"
 }
 
