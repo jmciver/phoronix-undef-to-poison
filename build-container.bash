@@ -42,7 +42,7 @@ function buildApptainer() {
     [[ -f "$sifFilename" ]] && rm "$sifFilename"
     apptainer \
         build \
-        --build-arg "USER_HOME=ptr" \
+        --build-arg "USER_HOME=/home/ubuntu" \
         "$sifFilename" \
         Apptainer
 }
