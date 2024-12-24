@@ -154,6 +154,14 @@ function listJobIds() {
     done
 }
 
+function setupMountPoints() {
+    [[ -d "$PTS_PATH" ]] || mkdir -p "$PTS_PATH"
+    declare ptsHome="${PTS_PATH}/${PTS_HOME}"
+    [[ -d "$ptsHome" ]] || mkdir -p "$ptsHome"
+    declare ptsInstall="${PTS_PATH}/${PTS_INSTALL}"
+    [[ -d "$ptsInstall" ]] || mkdir -p "$ptsInstall"
+}
+
 function runDocker() {
     declare userUID=$(id -u)
     declare userGID=$(id -g)
@@ -304,6 +312,7 @@ if [ ! -d "$LLVM_PATH" ]; then
 fi
 
 createDownloadCacheDirectory
+setupMountPoints
 case "$CONTAINER_TYPE" in
     docker)
         runDocker "$@"
