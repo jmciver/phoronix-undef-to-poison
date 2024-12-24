@@ -170,7 +170,7 @@ function phoronixBuildUsingAlive2() {
     declare -x ALIVECC_OVERWRITE_REPORTS=0
     declare -x ALIVECC_REPORT_DIR="/pts/pts-install/test-results/${jobNameBase}/alive2-logs"
     declare -x ALIVECC_QUIET=1
-    # declare -x ALIVECC_PARALLEL_FIFO=1
+    declare -x ALIVECC_PARALLEL_FIFO=1
 
     declare -x CC="/llvm/alive2/build/release/alivecc"
     declare -x CXX="/llvm/alive2/build/release/alive++"
