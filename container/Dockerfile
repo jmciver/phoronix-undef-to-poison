@@ -53,7 +53,6 @@ RUN apt-get update && \
     python3 \
     python3-psutil \
     re2c \
-    sudo \
     tcl \
     tclsh \
     unzip \
