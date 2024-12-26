@@ -208,7 +208,6 @@ function copyCMakePresets() {
     [ ! -f CMakePresets.json ] && cp "${SCRIPT_PATH}/${sourceName}" CMakePresets.json
 }
 
-
 function archiveGitVersionAndChanges() {
     if [ ! -d  "$PTS_INSTALL_DIR" ]; then
         printf 'ERROR: directory %s does not exist\n' "$PTS_INSTALL_DIR"
