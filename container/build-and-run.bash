@@ -142,7 +142,9 @@ function checkJobId() {
 
 function setupPtsHome() {
     declare userConfig="${PTS_USER_PATH_OVERRIDE}/user-config.xml"
+    declare testProfiles="${PTS_USER_PATH_OVERRIDE}/test-profiles"
     [[ -f "$userConfig" ]] || cp "${HOME}/user-config.xml" "$userConfig"
+    [[ -L "$testProfiles" ]] || ln -s '/pts/phoronix/test-profiles' "$testProfiles"
 }
 
 function phoronixMakeDownloadCache() {
