@@ -42,6 +42,10 @@ declare -r PTS_JOBS_FILE="${PHORONIX_DIR}/categorized-profiles.txt"
 
 declare -x DEBIAN_FRONTEND=noninteractive
 
+declare -x NUM_CPU_CORES=20
+declare -x ALIVE2_JOB_SERVER_PATH="${ALIVE2_BUILD_DIR}/alive-jobserver"
+declare -x ALIVE2_JOB_SERVER_THREADS=40
+
 function buildLLVM() {
     checkForLLVMDirectory
     pushd $LLVM_DIR &> /dev/null
@@ -226,6 +230,38 @@ function updateReturnValue() {
     fi
 }
 
+function validateInteger() {
+    declare number="$1"
+    declare minimum="$2"
+    declare maximum="$3"
+    declare testValue=''
+
+    if [[ -z "$number" ]]; then
+        printf 'ERROR: no number provided\n' >&2
+        return 1
+    fi
+    # Remove negative sign if present.
+    if [[ "${number%${number#?}}" = '-' ]]; then
+        testValue="${number#?}"
+    else
+        testValue="$number"
+    fi
+    declare noDigits=$(echo "$testValue" | sed 's/[[:digit:]]//g')
+    if [[ ! -z "$noDigits" ]]; then
+        printf 'ERROR: invalid number format %s\n' "$number" >&2
+        return 1
+    fi
+    if [[ ! -z "$minimum" && "$testValue" -lt "$minimum" ]]; then
+        printf 'ERROR: %i < %i\n' "$testValue" "$minimum" >&2
+        return 1
+    fi
+    if [[ ! -z "$maximum" && "$testValue" -gt "$maximum" ]]; then
+        printf 'ERROR: %i > %i\n' "$testValue" "$maximum" >&2
+        return 1
+    fi
+    return 0
+}
+
 function helpMessage() {
     cat <<-EOF
 Usage: $SCRIPT_NAME [OPTION]...
@@ -251,7 +287,7 @@ EOF
 RESULT=$(getopt \
              --name "$SCRIPT_NAME" \
              --options "$OPT_STRING" \
-             --longoptions "help,build-alive2,build,build-target:,list-jobs,phoronix,pts-alive2:,pts-make-download-cache,test,test-alive2::" \
+             --longoptions "help,build-alive2,build,build-target:,number-of-cores:,number-of-threads:,list-jobs,phoronix,pts-alive2:,pts-make-download-cache,test,test-alive2::" \
              -- "$@")
 
 if [ $? -ne 0 ]; then
@@ -300,6 +336,16 @@ while [ $# -gt 0 ]; do
             ;;
         --pts-make-download-cache)
             STEP_MAKE_DOWNLOAD_CACHE=1
+            ;;
+        --number-of-cores)
+            shift
+            NUM_CPU_CORES=$1
+            validateInteger "$NUM_CPU_CORES" 1 '' || exit 1
+            ;;
+        --number-of-threads)
+            shift
+            ALIVE2_JOB_SERVER_THREADS=$1
+            validateInteger "$ALIVE2_JOB_SERVER_THREADS" 1 '' || exit 1
             ;;
     esac
     shift
