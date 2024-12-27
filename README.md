@@ -73,6 +73,10 @@ ENTRY_POINT_OPTIONS are:
 Usage: build-and-run.bash [OPTION]...
   -h, --help               Help message
 
+      --number-of-cores=N   Number of CPU cores to build with
+      --number-of-threads=N Number of threads to provide to the Alive2
+                            job server
+
   -b, --build              Build phase 1 and 2 of LLVM bootstrap build
       --build-target=NAME  Build specific CMakePresets.json target name
       --build-alive2       Build Alive2
