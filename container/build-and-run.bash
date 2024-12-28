@@ -182,6 +182,7 @@ function phoronixBuildUsingAlive2() {
     declare -x CXX="/llvm/alive2/build/release/alive++"
     php /pts/phoronix/phoronix-test-suite/pts-core/phoronix-test-suite.php debug-install "${PTS_JOB_IDS[${PTS_JOB_ID}]}"
     # php /pts/phoronix/phoronix-test-suite/pts-core/phoronix-test-suite.php batch-run "${PTS_JOB_IDS[${PTS_JOB_ID}]}"
+    touch "${ALIVECC_REPORT_DIR}/FINISHED.txt"
 }
 
 function runPhoronix() {
