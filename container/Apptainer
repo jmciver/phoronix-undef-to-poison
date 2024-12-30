@@ -70,7 +70,8 @@ From: ubuntu:{{ VERSION }}
     setcap 'cap_sys_nice=eip' /usr/bin/nice && \
     rm $(readlink -f /usr/bin/g++) && rm $(readlink -f /usr/bin/gcc) && rm /usr/bin/g++ && rm /usr/bin/gcc && \
     sed -i -E 's,\$HOME,'{{ PTS_WORK_DIR }}',g' {{ USER_HOME }}/user-config.xml && \
-    sed -i -E 's,\$HOME,'{{ PTS_WORK_DIR }}',g' {{ USER_HOME }}/local-phoronix-run-config.bash
+    sed -i -E 's,\$HOME,'{{ PTS_WORK_DIR }}',g' {{ USER_HOME }}/local-phoronix-run-config.bash && \
+    chmod go+rwx {{ USER_HOME }}
 
 %environment
   export LANG=en_US.utf8
