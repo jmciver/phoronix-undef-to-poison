@@ -4,7 +4,7 @@
 #SBATCH -p skx
 #SBATCH -N 1                    # Total nodes per job
 #SBRACH -n 1                    # Total number of tasks requested
-#SBATCH -t 08:00:00
+#SBATCH -t 48:00:00
 #SBATCH -o pts-alive2-main-04-%j.out
 #SBATCH -e pts-alive2-main-04-%j.err
 module load tacc-apptainer

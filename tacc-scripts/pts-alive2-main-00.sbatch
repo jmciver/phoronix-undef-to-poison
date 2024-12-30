@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 #
 #SBATCH -J pts-alive2-main-00
-#SBATCH -p skx
+#SBATCH -p spr
 #SBATCH -N 1                    # Total nodes per job
 #SBRACH -n 1                    # Total number of tasks requested
 #SBATCH -t 48:00:00
