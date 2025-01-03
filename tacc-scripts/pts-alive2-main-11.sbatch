@@ -16,6 +16,6 @@ cd $WORK/phoronix
     --llvm=$HOME/llvm-phoronix/apptainer/main-sroa-gvn \
     --scratch=$SCRATCH/pts-alive-runs-test \
     -- \
-    --number-of-cores=24 \
-    --number-of-threads=48 \
+    --number-of-cores=56 \
+    --number-of-threads=112 \
     --pts-alive2=11

@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 #
 #SBATCH -J pts-alive2-main-05
-#SBATCH -p skx
+#SBATCH -p spr
 #SBATCH -N 1                    # Total nodes per job
 #SBRACH -n 1                    # Total number of tasks requested
 #SBATCH -t 48:00:00
@@ -16,6 +16,6 @@ cd $WORK/phoronix
     --llvm=$HOME/llvm-phoronix/apptainer/main-sroa-gvn \
     --scratch=$SCRATCH/pts-alive-runs-test \
     -- \
-    --number-of-cores=24 \
-    --number-of-threads=48 \
+    --number-of-cores=56 \
+    --number-of-threads=112 \
     --pts-alive2=5
