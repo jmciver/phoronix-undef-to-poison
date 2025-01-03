@@ -1,3 +1,4 @@
 *~
 *.sif
 /download-cache/
+/logs/
