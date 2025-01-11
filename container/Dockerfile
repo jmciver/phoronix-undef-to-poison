@@ -51,7 +51,9 @@ RUN apt-get update && \
     php-xml \
     pkg-config \
     python3 \
+    python3-pip \
     python3-psutil \
+    python3-yaml \
     re2c \
     tcl \
     tclsh \
