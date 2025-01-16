@@ -93,6 +93,16 @@ Usage: build-and-run.bash [OPTION]...
                                 tests
 ```
 
+### Alive2 Analysis at TACC
+
+The job IDs are mapped to the following processor architecture on TACC
+Stampede 3:
+
+| Architecture | Queue | Job Ids |
+|--------------|-------|---------|
+| Skylake | skx | 4,6,9,10,12,14,15,16,17,19,20,22 |
+| Sapphire Rapids | spr | 0,1,2,3,5,7,8,11,13,18,21 |
+
 ### Advanced
 
 The container instance is designed to be single use. All data added to
