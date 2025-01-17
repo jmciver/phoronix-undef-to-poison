@@ -30,8 +30,8 @@
             "inherits": "default",
             "displayName": "Ninja Debug",
             "description": "Build debug using Ninja",
-            "binaryDir": "../../build/debug",
-            "installDir": "../../install/debug",
+            "binaryDir": "../build/debug",
+            "installDir": "../install/debug",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug"
             }
@@ -41,8 +41,8 @@
             "inherits": "default",
             "displayName": "Ninja Release",
             "description": "Build release using Ninja",
-            "binaryDir": "../../build/release",
-            "installDir": "../../install/release",
+            "binaryDir": "../build/release",
+            "installDir": "../install/release",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release"
             }
@@ -52,8 +52,8 @@
             "inherits": "default",
             "displayName": "Ninja Release with Debug Info",
             "description": "Build release with debug info using Ninja",
-            "binaryDir": "../../build/releaseWithDebugInfo",
-            "installDir": "../../install/releaseWithDebugInfo",
+            "binaryDir": "../build/releaseWithDebugInfo",
+            "installDir": "../install/releaseWithDebugInfo",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "RelWithDebInfo"
             }
@@ -63,8 +63,8 @@
           "inherits": "default",
           "displayName": "Ninja Release1",
           "description": "Build release1 using Ninja",
-          "binaryDir": "../../build/release1",
-          "installDir": "../../install/release1",
+          "binaryDir": "../build/release1",
+          "installDir": "../install/release1",
           "cacheVariables": {
               "CMAKE_BUILD_TYPE": "Release",
               "CMAKE_C_COMPILER": "/usr/bin/clang",
@@ -76,12 +76,12 @@
           "inherits": "default",
           "displayName": "Ninja Release2",
           "description": "Build release2 using Ninja",
-          "binaryDir": "../../build/release2",
-          "installDir": "../../install/release2",
+          "binaryDir": "../build/release2",
+          "installDir": "../install/release2",
           "cacheVariables": {
               "CMAKE_BUILD_TYPE": "Release",
-              "CMAKE_C_COMPILER": "/llvm/build/release1/bin/clang",
-              "CMAKE_CXX_COMPILER": "/llvm/build/release1/bin/clang++"
+              "CMAKE_C_COMPILER": "/llvm/llvm-project/build/release1/bin/clang",
+              "CMAKE_CXX_COMPILER": "/llvm/llvm-project/build/release1/bin/clang++"
           }
         }
     ],

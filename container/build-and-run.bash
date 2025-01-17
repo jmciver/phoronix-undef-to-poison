@@ -25,8 +25,8 @@ declare -i STEP_ALIVE2_TEST=0
 
 declare -r LLVM_PROJECT_DIR="/llvm/llvm-project"
 declare -r LLVM_DIR="${LLVM_PROJECT_DIR}/llvm"
-declare -r LLVM_RELEASE1="/llvm/build/release1"
-declare -r LLVM_RELEASE2="/llvm/build/release2"
+declare -r LLVM_RELEASE1="${LLVM_PROJECT_DIR}/build/release1"
+declare -r LLVM_RELEASE2="${LLVM_PROJECT_DIR}/build/release2"
 declare -r PTS_INSTALL_DIR="/pts/pts-install"
 
 declare -r ALIVE2_DIR="/llvm/alive2"
@@ -190,14 +190,15 @@ function runPhoronix() {
         printf 'ERROR: Phonronix scripts directory "%s\n" does not exist' "$PHORONIX_DIR"
         exit 1
     fi
-    declare -r LLVM_BIN_PATH=$(realpath "${LLVM_DIR}/../../build/release2/bin")
-    if [ ! -f "${LLVM_BIN_PATH}/clang" ]; then
+    declare -r CLANG_BIN_C="${LLVM_RELEASE2}/bin/clang"
+    declare -r CLANG_BIN_CPP="${LLVM_RELEASE2}/bin/clang++"
+    if [ ! -f "$CLANG_BIN_C" ]; then
         print 'ERROR: Clang executable does not exist\n'
         exit 1
     fi
     archiveGitVersionAndChanges
-    declare -x CC="${LLVM_BIN_PATH}/clang"
-    declare -x CXX="${LLVM_BIN_PATH}/clang++"
+    declare -x CC="$CLANG_BIN_C"
+    declare -x CXX="$CLANG_BIN_CPP"
     pushd $PHORONIX_DIR &> /dev/null
     ./run.sh
     RETURN_VALUE=$?
