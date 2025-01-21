@@ -193,7 +193,7 @@ function runPhoronix() {
     declare -r CLANG_BIN_C="${LLVM_RELEASE2}/bin/clang"
     declare -r CLANG_BIN_CPP="${LLVM_RELEASE2}/bin/clang++"
     if [ ! -f "$CLANG_BIN_C" ]; then
-        print 'ERROR: Clang executable does not exist\n'
+        printf 'ERROR: Clang executable does not exist\n'
         exit 1
     fi
     archiveGitVersionAndChanges
