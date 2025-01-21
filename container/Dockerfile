@@ -40,7 +40,6 @@ RUN apt-get update && \
     libfreetype6-dev \
     libjpeg-dev \
     libnl-genl-3-dev \
-    libz3-dev \
     locales \
     mesa-utils \
     nasm \
