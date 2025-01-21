@@ -12,7 +12,7 @@
             "description": "Common build configuration for Alive2",
             "generator": "Ninja",
             "cacheVariables": {
-                "CMAKE_PREFIX_PATH": "/llvm/build/release1",
+                "CMAKE_PREFIX_PATH": "/llvm/llvm-project/build/release1",
                 "Z3_INCLUDE_DIR": "/llvm/z3/install/release/include",
                 "Z3_LIBRARIES": "/llvm/z3/install/release/lib/libz3.so",
                 "BUILD_TV": "1"
