@@ -13,7 +13,7 @@ cd $WORK/phoronix
 ./run-pts.bash \
     --no-cpu-checks \
     --container=apptainer \
-    --llvm=$HOME/llvm-phoronix/apptainer/main-sroa-gvn \
+    --llvm=$HOME/llvm-phoronix/apptainer/base-sroa-gvn \
     --scratch=$SCRATCH/pts-alive-runs-test \
     -- \
     --number-of-cores=24 \
