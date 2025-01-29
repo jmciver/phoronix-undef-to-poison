@@ -6,7 +6,6 @@
 #SBATCH -t 48:00:00
 #SBATCH -o pts-alive2-%A_%a.out # Standard output
 #SBATCH -e pts-alive2-%A_%a.err # Standard error
-#SBATCH --array=1-22
 module load tacc-apptainer
 
 cd $WORK/phoronix
