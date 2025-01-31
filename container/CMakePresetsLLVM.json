@@ -20,7 +20,7 @@
                 "LLVM_ENABLE_ASSERTIONS": "ON",
                 "LLVM_ENABLE_EH": "ON",
                 "LLVM_ENABLE_RTTI": "ON",
-                "LLVM_ENABLE_RUNTIMES": "libcxx;libcxxabi;libunwind",
+                "LLVM_ENABLE_RUNTIMES": "",
                 "LLVM_OPTIMIZED_TABLEGEN": "ON"
             }
         },
