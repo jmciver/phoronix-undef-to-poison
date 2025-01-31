@@ -40,6 +40,8 @@ declare -a PTS_JOB_IDS=()
 declare -i PTS_JOB_ID=0
 declare -r PTS_JOBS_FILE="${PHORONIX_DIR}/categorized-profiles.txt"
 
+declare -ar CMAKE_BUILD_TARGETS=('clang' 'opt')
+
 declare -x DEBIAN_FRONTEND=noninteractive
 
 declare -x NUM_CPU_CORES=20
@@ -52,9 +54,9 @@ function buildLLVM() {
     copyLLVMCMakePresetsJSON
     rm -rf ../../build/release2 && \
         cmake --preset release1 && \
-        cmake --build --preset release1 && \
+        cmake --build --preset release1 -t ${CMAKE_BUILD_TARGETS[*]} && \
         cmake --preset release2 && \
-        cmake --build --preset release2
+        cmake --build --preset release2 -t ${CMAKE_BUILD_TARGETS[*]}
     RETURN_VALUE=$?
     popd &> /dev/null
 }
@@ -64,7 +66,7 @@ function buildTargetByNameLLVM() {
     pushd $LLVM_DIR &> /dev/null
     copyLLVMCMakePresetsJSON
     cmake --preset "$LLVM_BUILD_TARGET_NAME" && \
-        cmake --build --preset "$LLVM_BUILD_TARGET_NAME"
+        cmake --build --preset "$LLVM_BUILD_TARGET_NAME" -t ${CMAKE_BUILD_TARGETS[*]}
     RETURN_VALUE=$?
     popd &> /dev/null
 }
