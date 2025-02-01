@@ -50,4 +50,4 @@ if [[ -z "$RUN_TYPE" ]]; then
     exit 1
 fi
 
-echo "sbatch --array=0,4,6,10,12,14,15,16,17,19,20 tacc-slurm-skx.sbatch $RUN_TYPE"
+sbatch --array=0,4,6,10,12,14,15,16,17,19,20 tacc-slurm-skx.sbatch ${RUN_TYPE}
