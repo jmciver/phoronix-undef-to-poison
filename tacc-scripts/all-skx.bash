@@ -8,12 +8,12 @@ declare -r SCRIPT_PATH=${0%/*}
 declare -r OPT_STRING="-h"
 
 declare RUN_TYPE=''
-
+declare -i START=0
 
 RESULT=$(getopt \
              --name "$SCRIPT_NAME" \
              --options "$OPT_STRING" \
-             --longoptions "help,type:" \
+             --longoptions "help,start,type:" \
              -- "$@")
 [[ $? -eq 0 ]] || exit 1
 
@@ -21,8 +21,11 @@ eval set -- "$RESULT"
 while [ $# -gt 0 ]; do
     case "$1" in
         -h | --help)
-            printf '%s: [-h|--help] --type=(base|dev|main)\n' "$SCRIPT_NAME"
+            printf '%s: [-h|--help] [--start] --type=(base|dev|main)\n' "$SCRIPT_NAME"
             exit 0
+            ;;
+        --start)
+            START=1
             ;;
         --type)
             shift
@@ -50,4 +53,8 @@ if [[ -z "$RUN_TYPE" ]]; then
     exit 1
 fi
 
-sbatch --array=0,4,6,10,12,14,15,16,17,19,20 tacc-slurm-skx.sbatch ${RUN_TYPE}
+if [[ $START -eq 1 ]]; then
+    sbatch --array=22 --time=00:15:00 tacc-slurm-skx.sbatch ${RUN_TYPE}
+else
+    sbatch --array=0,4,6,10,12,14,15,16,17,19,20 --time=48:00:00 tacc-slurm-skx.sbatch ${RUN_TYPE}
+fi

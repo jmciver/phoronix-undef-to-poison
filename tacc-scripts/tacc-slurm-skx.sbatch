@@ -3,7 +3,6 @@
 #SBATCH -J pts-alive2-run
 #SBATCH -p skx
 #SBATCH -N 1                    # Total nodes per job
-#SBATCH -t 48:00:00
 #SBATCH -o pts-alive2-%A_%a.out # Standard output
 #SBATCH -e pts-alive2-%A_%a.err # Standard error
 declare buildType=$1
