@@ -6,14 +6,16 @@
 #SBATCH -t 48:00:00
 #SBATCH -o pts-alive2-%A_%a.out # Standard output
 #SBATCH -e pts-alive2-%A_%a.err # Standard error
+declare buildType=$1
+
 module load tacc-apptainer
 
-cd $WORK/phoronix
+cd ${WORK}/phoronix
 ./run-pts.bash \
     --no-cpu-checks \
     --container=apptainer \
-    --llvm=$HOME/llvm-phoronix/apptainer/base-sroa-gvn \
-    --scratch=$SCRATCH/pts-alive-runs-test \
+    --llvm=${HOME}/llvm-phoronix/apptainer/${buildType}-sroa-gvn \
+    --scratch=${SCRATCH}/pts-alive-runs-${buildType} \
     -- \
     --number-of-cores=24 \
     --number-of-threads=48 \
