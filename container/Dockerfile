@@ -15,7 +15,7 @@ ARG PTS_USER_PATH_OVERRIDE=/pts/pts-home/
 
 RUN apt-get update && \
   apt-get -y upgrade && \
-  DEBIAN_FRONTEND=noninteractive apt-get -y install \
+  DEBIAN_FRONTEND=noninteractive apt-get -y --no-install-recommends install \
     apt-file \
     apt-utils \
     autoconf \
