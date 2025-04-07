@@ -41,6 +41,8 @@ RUN apt-get update && \
     libjpeg-dev \
     libnl-genl-3-dev \
     libzstd-dev \
+    linux-tools-common \
+    linux-tools-generic \
     locales \
     mesa-utils \
     nasm \
