@@ -40,6 +40,7 @@ RUN apt-get update && \
     libfreetype6-dev \
     libjpeg-dev \
     libnl-genl-3-dev \
+    libxml2-dev \
     libzstd-dev \
     linux-tools-common \
     linux-tools-generic \
