@@ -52,7 +52,7 @@ function buildLLVM() {
     checkForLLVMDirectory
     pushd $LLVM_DIR &> /dev/null
     copyLLVMCMakePresetsJSON
-    rm -rf ../../build/release2 && \
+    rm -rf ../build/release2 && \
         cmake --preset release1 && \
         cmake --build --preset release1 -t ${CMAKE_BUILD_TARGETS[*]} && \
         cmake --preset release2 && \
