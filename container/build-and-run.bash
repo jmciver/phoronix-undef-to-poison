@@ -83,7 +83,7 @@ function testLLVM() {
 function buildAlive2() {
     checkForBuildDirectory "LLVM" "$LLVM_RELEASE1"
     pushd "$ALIVE2_DIR" &> /dev/null
-    copyCMakePresets "CMakePresetsAlive2.json"
+    copyCMakePresets "CMakeUserPresetsAlive2.json"
     cmake --preset release && cmake --build --preset release
     RETURN_VALUE=$?
     popd &> /dev/null
@@ -92,7 +92,7 @@ function buildAlive2() {
 
 function buildZ3() {
     pushd "$Z3_DIR" &> /dev/null
-    copyCMakePresets "CMakePresetsZ3.json"
+    copyCMakePresets "CMakeUserPresetsZ3.json"
     cmake --preset release && cmake --build --preset release
     RETURN_VALUE=$?
     popd &> /dev/null
@@ -208,12 +208,12 @@ function runPhoronix() {
 }
 
 function copyLLVMCMakePresetsJSON() {
-    [ ! -f CMakePresets.json ] && cp "${SCRIPT_PATH}/CMakePresetsLLVM.json" CMakePresets.json
+    [ ! -f CMakeUserPresets.json ] && cp "${SCRIPT_PATH}/CMakeUserPresetsLLVM.json" CMakeUserPresets.json
 }
 
 function copyCMakePresets() {
     declare sourceName=$1
-    [ ! -f CMakePresets.json ] && cp "${SCRIPT_PATH}/${sourceName}" CMakePresets.json
+    [ ! -f CMakeUserPresets.json ] && cp "${SCRIPT_PATH}/${sourceName}" CMakeUserPresets.json
 }
 
 function archiveGitVersionAndChanges() {

@@ -81,9 +81,9 @@ RUN mkdir ${PTS_WORK_DIR} && chown $USER:$USER ${PTS_WORK_DIR}
 WORKDIR /home/$USER
 COPY --chown=$USER:$USER user-config.xml .
 COPY --chown=$USER:$USER local-phoronix-run-config.bash .
-COPY --chown=$USER:$USER CMakePresetsLLVM.json .
-COPY --chown=$USER:$USER CMakePresetsAlive2.json .
-COPY --chown=$USER:$USER CMakePresetsZ3.json .
+COPY --chown=$USER:$USER CMakeUserPresetsLLVM.json .
+COPY --chown=$USER:$USER CMakeUserPresetsAlive2.json .
+COPY --chown=$USER:$USER CMakeUserPresetsZ3.json .
 COPY --chown=$USER:$USER build-and-run.bash .
 RUN sed -i -E 's,\$HOME,'${PTS_WORK_DIR}',g' user-config.xml && \
     sed -i -E 's,\$HOME,'${PTS_WORK_DIR}',g' local-phoronix-run-config.bash
