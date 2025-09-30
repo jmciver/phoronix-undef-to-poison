@@ -25,6 +25,7 @@ RUN apt-get update && \
     cmake \
     cmake-data \
     curl \
+    file \
     fftw-dev \
     flex \
     git \
