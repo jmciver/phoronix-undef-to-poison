@@ -72,6 +72,7 @@ RUN apt-get update && \
 
 ENV LANG=en_US.utf8
 ENV PTS_USER_PATH_OVERRIDE=$PTS_USER_PATH_OVERRIDE
+ENV HOME=/home/${USER}
 
 # Disable gcc and g++ from being accessible to the runtime user.
 RUN chmod 700 $(readlink -f /usr/bin/g++) && chmod 700 $(readlink -f /usr/bin/gcc)
