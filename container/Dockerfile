@@ -79,6 +79,7 @@ RUN chmod 700 $(readlink -f /usr/bin/g++) && chmod 700 $(readlink -f /usr/bin/gc
 RUN mkdir ${PTS_WORK_DIR} && chown $USER:$USER ${PTS_WORK_DIR}
 
 WORKDIR /home/$USER
+RUN chmod g+rwx,o+rwx /home/$USER
 COPY --chown=$USER:$USER user-config.xml .
 COPY --chown=$USER:$USER local-phoronix-run-config.bash .
 COPY --chown=$USER:$USER CMakeUserPresetsLLVM.json .
