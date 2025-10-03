@@ -1,4 +1,5 @@
 *~
 *.sif
+download-cache.tar.bz2
 /download-cache/
 /logs/
