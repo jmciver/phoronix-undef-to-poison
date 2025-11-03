@@ -1,0 +1,10 @@
+--- /usr/include/c++/14/bits/stl_bvector.h	2025-11-03 00:14:53.941326960 +0000
++++ /usr/include/c++/14/bits/stl_bvector.h	2025-11-03 00:14:44.502248319 +0000
+@@ -685,6 +685,7 @@
+ 	      std::construct_at(std::to_address(__p) + __i);
+ 	  }
+ #endif
++	__builtin_memset(__to_address(__p), 0, _S_nword(__n) * sizeof(_Bit_type));
+ 	return __p;
+       }
+ 

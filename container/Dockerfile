@@ -28,6 +28,7 @@ RUN apt-get update && \
     file \
     fftw-dev \
     flex \
+    g++-14 \
     git \
     less \
     libasio-dev \
@@ -88,8 +89,10 @@ COPY --chown=$USER:$USER CMakeUserPresetsLLVM.json .
 COPY --chown=$USER:$USER CMakeUserPresetsAlive2.json .
 COPY --chown=$USER:$USER CMakeUserPresetsZ3.json .
 COPY --chown=$USER:$USER build-and-run.bash .
+COPY --chown=$USER:$USER stl_bvector_h.patch .
 RUN sed -i -E 's,\$HOME,'${PTS_WORK_DIR}',g' user-config.xml && \
-    sed -i -E 's,\$HOME,'${PTS_WORK_DIR}',g' local-phoronix-run-config.bash
+    sed -i -E 's,\$HOME,'${PTS_WORK_DIR}',g' local-phoronix-run-config.bash && \
+    patch -p0 /usr/include/c++/14/bits/stl_bvector.h < stl_bvector_h.patch
 
 USER ${USER}
 ENTRYPOINT ["./build-and-run.bash"]
