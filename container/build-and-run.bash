@@ -54,9 +54,7 @@ function buildLLVM() {
     copyLLVMCMakePresetsJSON
     rm -rf ../build/release2 && \
         cmake --preset release1 && \
-        cmake --build --preset release1 -t ${CMAKE_BUILD_TARGETS[*]} && \
-        cmake --preset release2 && \
-        cmake --build --preset release2 -t ${CMAKE_BUILD_TARGETS[*]}
+        cmake --build --preset release1 -t ${CMAKE_BUILD_TARGETS[*]}
     RETURN_VALUE=$?
     popd &> /dev/null
 }
@@ -192,8 +190,8 @@ function runPhoronix() {
         printf 'ERROR: Phonronix scripts directory "%s\n" does not exist' "$PHORONIX_DIR"
         exit 1
     fi
-    declare -r CLANG_BIN_C="${LLVM_RELEASE2}/bin/clang"
-    declare -r CLANG_BIN_CPP="${LLVM_RELEASE2}/bin/clang++"
+    declare -r CLANG_BIN_C="${LLVM_RELEASE1}/bin/clang"
+    declare -r CLANG_BIN_CPP="${LLVM_RELEASE1}/bin/clang++"
     if [ ! -f "$CLANG_BIN_C" ]; then
         printf 'ERROR: Clang executable does not exist\n'
         exit 1
