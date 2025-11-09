@@ -41,6 +41,10 @@ RUN apt-get update && \
     libfindbin-libs-perl \
     libfreetype6-dev \
     libjpeg-dev \
+    liblcms2-2 \
+    liblcms2-dev \
+    libssl-dev \
+    libtool \
     libnl-genl-3-dev \
     libxml2-dev \
     libzstd-dev \
