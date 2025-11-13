@@ -64,6 +64,7 @@ RUN apt-get update && \
     python3-psutil \
     python3-yaml \
     re2c \
+    time \
     tcl \
     tclsh \
     unzip \
