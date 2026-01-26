@@ -39,10 +39,9 @@ function buildApptainer() {
     declare -r sifFilename="${CONTAINER_BASENAME}-${CONTAINER_VERSION}.sif"
     [[ -f "$sifFilename" ]] && rm "$sifFilename"
     apptainer \
-        build \
-        --build-arg "USER_HOME=/home/ubuntu" \
-        "$sifFilename" \
-        Apptainer
+      build \
+      "$sifFilename" \
+      docker-daemon://pts-test:1
 }
 
 RESULT=$(getopt \
