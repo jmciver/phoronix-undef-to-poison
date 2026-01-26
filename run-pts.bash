@@ -206,6 +206,8 @@ function runApptainer() {
         apptainer \
             shell \
             --no-home \
+            --home /home/ubuntu \
+            --pwd /home/ubuntu \
             --containall \
             --mount type=bind,source="$(pwd)",target="/pts/phoronix" \
             --mount type=bind,source="$ptsInstallPath",target="/pts/pts-install" \
@@ -216,6 +218,8 @@ function runApptainer() {
         apptainer \
             run \
             --no-home \
+            --home /home/ubuntu \
+            --pwd /home/ubuntu \
             --containall \
             --mount type=bind,source="$(pwd)",target="/pts/phoronix" \
             --mount type=bind,source="$ptsInstallPath",target="/pts/pts-install" \
